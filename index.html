@@ -1,0 +1,788 @@
+<!DOCTYPE html>
+<html lang="th">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>ห้องทดลองเคมีออนไลน์</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Noto+Sans+Thai:wght@400;600;700&display=swap">
+<style>
+:root{--bg:#f6f7fb;--card:#fff;--tx:#1b1f2a;--mut:#6b7280;--bd:#e2e5ee;--ac:#4f46e5;--ac2:#fff;
+--alk:#fecaca;--ae:#fed7aa;--tr:#fde68a;--post:#bbf7d0;--meta:#a7f3d0;--non:#bfdbfe;--hal:#ddd6fe;--nob:#fbcfe8;
+box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#0f1220;--card:#1a1e30;--tx:#eef0f8;--mut:#9aa1b5;--bd:#2c3250;--ac:#818cf8;--ac2:#0f1220;
+--alk:#7f1d1d;--ae:#7c2d12;--tr:#713f12;--post:#14532d;--meta:#064e3b;--non:#1e3a8a;--hal:#4c1d95;--nob:#831843}}
+:root[data-theme="dark"]{--bg:#0f1220;--card:#1a1e30;--tx:#eef0f8;--mut:#9aa1b5;--bd:#2c3250;--ac:#818cf8;--ac2:#0f1220;
+--alk:#7f1d1d;--ae:#7c2d12;--tr:#713f12;--post:#14532d;--meta:#064e3b;--non:#1e3a8a;--hal:#4c1d95;--nob:#831843}
+*{box-sizing:border-box}
+html{scroll-padding-top:env(safe-area-inset-top,0px)}
+body{margin:0;background:var(--bg);color:var(--tx);font-family:"Noto Sans Thai",system-ui,sans-serif;line-height:1.5}
+main{max-width:980px;margin:0 auto;padding:16px}
+h1{font-size:1.5rem;margin:.2em 0}
+p.sub{color:var(--mut);margin:0 0 14px}
+.card{background:var(--card);border:1px solid var(--bd);border-radius:16px;padding:14px;margin-bottom:14px}
+.scroll{overflow-x:auto;padding-bottom:6px}
+#pt{display:grid;grid-template-columns:repeat(18,40px);grid-auto-rows:44px;gap:3px;width:max-content}
+.el{border:1px solid rgba(0,0,0,.12);border-radius:7px;padding:0;cursor:pointer;color:var(--tx);font-family:inherit;position:relative;display:flex;flex-direction:column;align-items:center;justify-content:center;line-height:1.05}
+.el b{font-size:.95rem}.el small{font-size:.5rem;opacity:.7}
+.el:active{transform:scale(.92)}
+.el .n{position:absolute;top:-5px;right:-5px;background:var(--ac);color:var(--ac2);font-size:.62rem;border-radius:9px;padding:0 5px;font-weight:700}
+.el.sel{outline:2px solid var(--ac)}
+.legend{display:flex;flex-wrap:wrap;gap:6px 12px;font-size:.78rem;color:var(--mut);margin-top:8px}
+.legend i{display:inline-block;width:11px;height:11px;border-radius:3px;margin-right:4px;vertical-align:-1px}
+h2{font-size:1.05rem;margin:0 0 10px}
+#chips{display:flex;flex-wrap:wrap;gap:8px;min-height:44px}
+.chip{display:flex;align-items:center;gap:6px;border:1px solid var(--bd);border-radius:12px;padding:4px 6px 4px 10px}
+.chip button{width:28px;height:28px;border-radius:8px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);font-size:1rem;cursor:pointer}
+.empty{color:var(--mut)}
+.row{display:flex;flex-wrap:wrap;gap:8px;margin-top:12px}
+.btn{border:1px solid var(--bd);background:var(--bg);color:var(--tx);border-radius:10px;padding:8px 14px;font-family:inherit;cursor:pointer}
+.btn.pri{background:var(--ac);color:var(--ac2);border-color:var(--ac);font-weight:700}
+#res .f{font-size:2.2rem;font-weight:700;margin:0}
+#res .nm{font-size:1.15rem;font-weight:600}
+#res.pop{animation:pop .5s}
+@keyframes pop{0%{transform:scale(.96);opacity:.4}100%{transform:scale(1);opacity:1}}
+.bar{display:flex;height:16px;border-radius:8px;overflow:hidden;margin:10px 0 6px;border:1px solid var(--bd)}
+.pct{display:flex;flex-wrap:wrap;gap:4px 14px;font-size:.85rem;color:var(--mut)}
+.alt{margin-top:10px;padding-top:10px;border-top:1px dashed var(--bd)}
+.tag{display:inline-block;font-size:.75rem;border-radius:6px;padding:1px 8px;background:var(--bg);border:1px solid var(--bd);color:var(--mut)}
+.rxrow{display:flex;gap:6px;margin-bottom:8px}.rxrow input{flex:1;min-width:0;font:inherit;font-size:1.05rem;padding:8px 12px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)}
+.rxout{margin-top:12px}.eq{font-size:1.5rem;font-weight:700;margin:6px 0;word-break:break-word}.err{color:#dc2626}.prod{margin:2px 0}
+[hidden]{display:none!important}
+.tabs{display:flex;gap:6px;margin-bottom:14px}.tab{flex:1;padding:10px;border-radius:12px;border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-weight:600;cursor:pointer}.tab.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
+.fm{display:flex;flex-wrap:wrap;gap:8px}.fm span{background:var(--bg);border:1px solid var(--bd);border-radius:10px;padding:6px 12px;font-weight:600}
+.fld{display:flex;flex-wrap:wrap;gap:8px;margin-bottom:10px}.fld label{font-size:.85rem;color:var(--mut);display:flex;flex-direction:column;gap:2px;flex:1;min-width:120px}.fld input,.fld select{font:inherit;font-size:1rem;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx);min-width:0;width:100%}
+table.rs{width:100%;border-collapse:collapse;margin-top:10px}.rs td{padding:6px 8px;border-bottom:1px solid var(--bd);vertical-align:top}.rs td:last-child{color:var(--mut);font-size:.85rem}
+.tabs{flex-wrap:wrap}.tab{min-width:130px;font-size:.92rem}.fld input[type=range]{padding:0;border:0;background:none;accent-color:var(--ac)}
+.phbar{height:14px;border-radius:7px;background:linear-gradient(90deg,#dc2626,#f97316,#facc15,#22c55e,#06b6d4,#3b82f6,#7c3aed);position:relative;margin:12px 0 22px}.phbar i{position:absolute;top:-4px;width:4px;height:22px;background:var(--tx);border-radius:2px;transform:translateX(-2px)}.phbar span{position:absolute;top:19px;font-size:.7rem;color:var(--mut)}
+.tabs{flex-wrap:nowrap;overflow-x:auto;position:sticky;top:env(safe-area-inset-top,0px);z-index:5;background:var(--bg);padding:8px 0;margin:0 0 10px;scrollbar-width:none}.tabs::-webkit-scrollbar{display:none}.tab{flex:0 0 auto;min-width:0;white-space:nowrap;padding:9px 14px}
+.foot{display:flex;flex-wrap:wrap;gap:10px;align-items:center;justify-content:space-between;color:var(--mut);font-size:.85rem;padding:6px 4px 24px}
+.qrbox{background:#fff;padding:12px;border-radius:14px;display:inline-block;min-width:244px;min-height:244px;color:#111}.qrbox img{display:block}
+.amts{display:flex;flex-wrap:wrap;gap:8px;margin:0 0 14px;align-items:center}.amts .btn.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
+.bank{display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px;align-items:center;padding:10px 0;border-bottom:1px solid var(--bd)}.lnk{display:inline-block;text-decoration:none;margin:4px 8px 4px 0}
+:root[data-theme='dark']{color-scheme:dark}:root[data-theme='light']{color-scheme:light}
+.themebar{display:flex;justify-content:flex-end;gap:4px;margin-bottom:2px}.tm{border:1px solid var(--bd);background:var(--card);color:var(--tx);font:inherit;font-size:.8rem;padding:5px 10px;border-radius:9px;cursor:pointer}.tm.on{background:var(--ac);color:var(--ac2);border-color:var(--ac)}
+</style>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+</head>
+<body>
+<main>
+<h1>⚗️ ห้องทดลองเคมีออนไลน์</h1>
+<p class="sub">แตะธาตุเพื่อใส่ลงในขวด ปรับจำนวนอะตอม แล้วกด “ผสม” เพื่อดูว่าได้สารอะไร พร้อมมวลโมเลกุล</p>
+
+<div class='tabs'><button class='tab on' data-t='tab1'>⚗️ ผสมธาตุ / สูตร</button><button class='tab' data-t='tab2'>🧮 คำนวณโมล</button><button class='tab' data-t='tab3'>⚖️ ดุลสมการ</button><button class='tab' data-t='tab4'>🧬 อินทรีย์ / พอลิเมอร์</button><button class='tab' data-t='tab5'>💨 แก๊ส</button><button class='tab' data-t='tab6'>🧪 กรด-เบส</button><button class='tab' data-t='tab7'>☕ สนับสนุน</button></div>
+<div id='tab1'>
+<div class="card">
+  <div class="scroll"><div id="pt"></div></div>
+  <div class="legend" id="lg"></div>
+</div>
+
+<div class="card">
+  <h2>🧪 ขวดทดลอง</h2>
+  <div id="chips"></div>
+  <div class="row">
+    <button class="btn pri" id="mix">ผสม</button>
+    <button class="btn" id="clr">ล้างขวด</button>
+  </div>
+  <div class="row" id="ex"></div>
+</div>
+
+<div class="card">
+  <h2>🔬 ผสมสูตรเคมี</h2>
+  <p class="sub" style="margin:0 0 10px">พิมพ์สูตรสารตั้งแต่ 2 ชนิด (เช่น H2, O2, HCl, NaOH, CH4) แล้วดูว่าเกิดปฏิกิริยาอะไร ได้สารใดบ้าง</p>
+  <div id="rx"></div>
+  <div class="row"><button class="btn" id="rxAdd">+ เพิ่มสาร</button><button class="btn pri" id="rxGo">ผสมสูตร</button></div>
+  <div class="row" id="rxEx"></div>
+  <div class="rxout" id="rxOut"></div>
+  <datalist id="dl"></datalist>
+</div>
+
+<div class="card" id="res"><span class="empty">ยังไม่มีผลลัพธ์ — เลือกธาตุแล้วกด “ผสม”</span></div>
+</div>
+<div id='tab2' hidden>
+<div class='card'><h2>📐 สูตรความสัมพันธ์ของโมล</h2><div class='fm'><span>n = m ÷ M</span><span>N = n × 6.022×10²³</span><span>V<sub>STP</sub> = n × 22.4 L</span><span>n = C × V</span><span>C₁V₁ = C₂V₂</span></div></div>
+<div class='card'><h2>1) แปลงหน่วยของสาร</h2>
+<div class='fld'><label>สูตรเคมีของสาร<input id='mf' list='dl' value='H2O' autocomplete='off' autocapitalize='off'></label><label>ค่าที่รู้<select id='mk'><option value='m'>มวล (g)</option><option value='n'>จำนวนโมล (mol)</option><option value='N'>จำนวนอนุภาค</option><option value='V'>ปริมาตรแก๊ส STP (L)</option></select></label><label>ค่า<input id='mv' value='36' inputmode='decimal'></label></div>
+<button class='btn pri' id='mcalc'>คำนวณ</button><div class='rxout' id='mout'></div></div>
+<div class='card'><h2>2) สารละลาย</h2>
+<p class='sub' style='margin:0 0 8px'>n = C × V — เว้นว่าง 1 ช่องที่ต้องการหา</p>
+<div class='fld'><label>โมล n (mol)<input id='sn' inputmode='decimal'></label><label>ความเข้มข้น C (mol/L)<input id='sc' inputmode='decimal'></label><label>ปริมาตร V (L)<input id='sv' inputmode='decimal'></label></div>
+<button class='btn pri' id='scalc'>หาค่า</button><div class='rxout' id='sout'></div>
+<hr style='border:0;border-top:1px dashed var(--bd);margin:16px 0'>
+<p class='sub' style='margin:0 0 8px'>การเจือจาง C₁V₁ = C₂V₂ (หน่วยปริมาตรต้องเหมือนกัน) — เว้นว่าง 1 ช่อง</p>
+<div class='fld'><label>C₁<input id='dc1' inputmode='decimal'></label><label>V₁<input id='dv1' inputmode='decimal'></label><label>C₂<input id='dc2' inputmode='decimal'></label><label>V₂<input id='dv2' inputmode='decimal'></label></div>
+<button class='btn pri' id='dcalc'>หาค่า</button><div class='rxout' id='dout'></div></div>
+<div class='card'><h2>3) คำนวณตามสมการเคมี</h2>
+<div class='fld'><label>เลือกปฏิกิริยา<select id='rs'></select></label></div>
+<div class='fld'><label>สารที่รู้ปริมาณ<select id='sp'></select></label><label>หน่วย<select id='su'><option value='g'>กรัม (g)</option><option value='mol'>โมล (mol)</option></select></label><label>ปริมาณ<input id='sq' value='10' inputmode='decimal'></label></div>
+<button class='btn pri' id='tcalc'>คำนวณ</button><div class='rxout' id='tout'></div></div>
+<div class='card'><h2>4) โมลาริตีและโมแลลิตี</h2>
+<p class='sub' style='margin:0 0 8px'>โมลาริตี M = n ÷ V<sub>สารละลาย</sub> (mol/L) · โมแลลิตี m = n ÷ มวลตัวทำละลาย (mol/kg) — กรอกเฉพาะค่าที่มี</p>
+<div class='fld'><label>สูตรตัวถูกละลาย<input id='cf' list='dl' value='NaCl' autocomplete='off' autocapitalize='off'></label><label>มวลตัวถูกละลาย (g)<input id='cm' value='5.85' inputmode='decimal'></label></div>
+<div class='fld'><label>ปริมาตรสารละลาย (mL)<input id='cv' value='100' inputmode='decimal'></label><label>มวลตัวทำละลาย (g) เช่น น้ำ<input id='cs' value='100' inputmode='decimal'></label></div>
+<button class='btn pri' id='ccalc'>คำนวณความเข้มข้น</button><div class='rxout' id='cout'></div></div>
+<div class='card'><h2>5) เตรียมสารละลายตามความเข้มข้นที่ต้องการ</h2>
+<div class='fld'><label>สูตรตัวถูกละลาย<input id='pf' list='dl' value='NaOH' autocomplete='off' autocapitalize='off'></label><label>ชนิดความเข้มข้น<select id='ptype'><option value='M'>โมลาริตี (mol/L)</option><option value='b'>โมแลลิตี (mol/kg)</option></select></label></div>
+<div class='fld'><label>ความเข้มข้นที่ต้องการ<input id='pc' value='0.5' inputmode='decimal'></label><label id='pl'>ปริมาตรสารละลาย (mL)<input id='pa' value='250' inputmode='decimal'></label></div>
+<button class='btn pri' id='pcalc'>หามวลที่ต้องชั่ง</button><div class='rxout' id='pout'></div></div>
+</div>
+<div id='tab3' hidden>
+<div class='card'><h2>⚖️ ดุลสมการเคมี</h2>
+<p class='sub' style='margin:0 0 10px'>พิมพ์สมการที่ยังไม่ดุล คั่นสารด้วย + และใช้ -&gt; หรือ = คั่นระหว่างสารตั้งต้นกับผลิตภัณฑ์ เช่น Fe + O2 -&gt; Fe2O3 (ไม่ต้องใส่สัมประสิทธิ์)</p>
+<div class='fld'><label style='min-width:220px'>สมการ<input id='bq' value='C3H8 + O2 -> CO2 + H2O' autocomplete='off' autocapitalize='off' spellcheck='false'></label></div>
+<button class='btn pri' id='bgo'>ดุลสมการ</button>
+<div class='row' id='bex'></div>
+<div class='rxout' id='bout'></div></div>
+<div class='card'><h2>วิธีที่ใช้</h2><p class='empty' style='margin:0'>แปลงจำนวนอะตอมของแต่ละธาตุเป็นระบบสมการเชิงเส้น แล้วแก้ด้วยการกำจัดแบบเกาส์เพื่อหาสัมประสิทธิ์จำนวนเต็มที่น้อยที่สุด (ยังไม่รองรับสมการไอออนิกที่มีประจุ)</p></div>
+</div>
+<div id='tab4' hidden>
+<div class='card'><h2>🧬 เคมีอินทรีย์: สร้างโมเลกุลจากหมู่ฟังก์ชัน</h2>
+<p class='sub' style='margin:0 0 10px'>เลือกประเภทสารและความยาวสายคาร์บอน แล้วดูโครงสร้าง สูตร ชื่อ และปฏิกิริยาการเผาไหม้</p>
+<div class='fld'><label>ประเภทสาร<select id='ofam'><option value='alkane'>แอลเคน (C–C เดี่ยว)</option><option value='alkene'>แอลคีน (C=C)</option><option value='alkyne'>แอลไคน์ (C≡C)</option><option value='alcohol'>แอลกอฮอล์ (–OH)</option><option value='aldehyde'>แอลดีไฮด์ (–CHO)</option><option value='acid'>กรดคาร์บอกซิลิก (–COOH)</option><option value='halo'>เฮโลแอลเคน (–Cl)</option></select></label><label>จำนวนคาร์บอน: <b id='onv'>3</b><input id='on' type='range' min='1' max='10' value='3'></label></div>
+<div id='osvg'></div><div id='oout'></div></div>
+<div class='card'><h2>🔗 พอลิเมอร์: จำลองการต่อสายโซ่</h2>
+<div class='fld'><label>เลือกพอลิเมอร์<select id='yp'></select></label><label>จำนวนหน่วยซ้ำ n: <b id='ynv'>5</b><input id='yn' type='range' min='1' max='100' value='5'></label></div>
+<button class='btn pri' id='yplay'>▶ จำลองการเกิดพอลิเมอร์</button>
+<div id='ysvg' style='margin-top:12px'></div><div id='yout'></div></div>
+</div>
+<div id='tab5' hidden>
+<div class='card'><h2>📐 สูตรแก๊ส</h2><div class='fm'><span>PV = nRT</span><span>P₁V₁/T₁ = P₂V₂/T₂</span><span>ρ = PM ÷ RT</span><span>r₁/r₂ = √(M₂/M₁)</span><span>P<sub>i</sub> = X<sub>i</sub> × P<sub>รวม</sub></span></div><p class='empty' style='margin:8px 0 0'>R = 0.08206 L·atm/(mol·K) · T ต้องเป็นเคลวิน (K = °C + 273.15)</p></div>
+<div class='card'><h2>1) กฎแก๊สอุดมคติ PV = nRT</h2><p class='sub' style='margin:0 0 8px'>เว้นว่าง 1 ช่องที่ต้องการหา</p>
+<div class='fld'><label>ความดัน P<input id='gp' inputmode='decimal' value='1'></label><label>หน่วย P<select id='gpu'><option value='atm'>atm</option><option value='kPa'>kPa</option><option value='mmHg'>mmHg</option><option value='bar'>bar</option></select></label><label>ปริมาตร V (L)<input id='gv' inputmode='decimal'></label></div>
+<div class='fld'><label>จำนวนโมล n (mol)<input id='gn' inputmode='decimal' value='1'></label><label>อุณหภูมิ T<input id='gt' inputmode='decimal' value='0'></label><label>หน่วย T<select id='gtu'><option value='C'>°C</option><option value='K'>K</option></select></label></div>
+<button class='btn pri' id='ggo'>หาค่า</button><div class='rxout' id='gout'></div></div>
+<div class='card'><h2>2) กฎแก๊สรวม P₁V₁/T₁ = P₂V₂/T₂</h2><p class='sub' style='margin:0 0 8px'>เว้นว่าง 1 ช่อง (P และ V ใช้หน่วยเดียวกันทั้งสองฝั่ง)</p>
+<div class='fld'><label>P₁<input id='k1' inputmode='decimal' value='1'></label><label>V₁<input id='k2' inputmode='decimal' value='10'></label><label>T₁<input id='k3' inputmode='decimal' value='27'></label></div>
+<div class='fld'><label>P₂<input id='k4' inputmode='decimal' value='2'></label><label>V₂<input id='k5' inputmode='decimal'></label><label>T₂<input id='k6' inputmode='decimal' value='27'></label></div>
+<div class='fld'><label>หน่วยอุณหภูมิ<select id='ktu'><option value='C'>°C</option><option value='K'>K</option></select></label></div>
+<button class='btn pri' id='kgo'>หาค่า</button><div class='rxout' id='kout'></div></div>
+<div class='card'><h2>3) ความหนาแน่น อัตราเร็ว และการแพร่ของแก๊ส (Graham)</h2>
+<div class='fld'><label>แก๊สที่ 1 (สูตร)<input id='hf1' list='dl' value='CO2' autocomplete='off' autocapitalize='off'></label><label>แก๊สที่ 2 (ไม่ใส่ก็ได้)<input id='hf2' list='dl' value='H2' autocomplete='off' autocapitalize='off'></label></div>
+<div class='fld'><label>ความดัน (atm)<input id='hP' inputmode='decimal' value='1'></label><label>อุณหภูมิ (°C)<input id='hT' inputmode='decimal' value='25'></label></div>
+<button class='btn pri' id='hgo'>คำนวณ</button><div class='rxout' id='hout'></div></div>
+<div class='card'><h2>4) กฎของดัลตัน: ความดันย่อยของแก๊สผสม</h2><p class='sub' style='margin:0 0 8px'>ใส่แก๊สอย่างน้อย 2 ชนิด (ตัวอย่างคืออากาศ)</p>
+<div id='zrows'></div>
+<div class='fld'><label>ความดันรวม (atm)<input id='zP' inputmode='decimal' value='1'></label></div>
+<button class='btn pri' id='zgo'>คำนวณ</button><div class='rxout' id='zout'></div></div>
+</div>
+<div id='tab6' hidden>
+<div class='card'><h2>🧪 คำนวณ pH ของกรด/เบส</h2>
+<div class='fld'><label>ประเภท<select id='abt'><option value='sa'>กรดแก่ (เช่น HCl)</option><option value='sb'>เบสแก่ (เช่น NaOH)</option><option value='wa'>กรดอ่อน (ใช้ Ka)</option><option value='wb'>เบสอ่อน (ใช้ Kb)</option></select></label><label>ความเข้มข้น C (mol/L)<input id='abc' inputmode='decimal' value='0.1'></label></div>
+<div class='fld'><label>กรด/เบสอ่อนตัวอย่าง<select id='abpre'></select></label><label>Ka หรือ Kb<input id='abk' inputmode='decimal' value='1.8e-5'></label><label>H⁺/OH⁻ ต่อสูตร (กรด/เบสแก่)<select id='abn'><option>1</option><option>2</option><option>3</option></select></label></div>
+<button class='btn pri' id='abgo'>คำนวณ pH</button><div class='rxout' id='about'></div></div>
+<div class='card'><h2>🔄 แปลงค่า pH / pOH / [H⁺] / [OH⁻]</h2>
+<div class='fld'><label>ค่าที่รู้<select id='phk'><option value='pH'>pH</option><option value='pOH'>pOH</option><option value='H'>[H⁺] (mol/L)</option><option value='OH'>[OH⁻] (mol/L)</option></select></label><label>ค่า<input id='phv' inputmode='decimal' value='3'></label></div>
+<button class='btn pri' id='phgo'>แปลงค่า</button><div class='rxout' id='phout'></div></div>
+<div class='card'><h2>📉 ไทเทรตกรดแก่ด้วยเบสแก่ พร้อมกราฟ</h2><p class='sub' style='margin:0 0 8px'>เว้น Vเบสว่างเพื่อดูเฉพาะจุดสมมูล หรือใส่ปริมาตรเบสที่เติมแล้วเพื่อหา pH ณ จุดนั้น</p>
+<div class='fld'><label>C กรด (mol/L)<input id='ti_ca' inputmode='decimal' value='0.1'></label><label>V กรด (mL)<input id='ti_va' inputmode='decimal' value='25'></label><label>H⁺ ต่อกรด 1 สูตร<select id='ti_na'><option>1</option><option>2</option></select></label></div>
+<div class='fld'><label>C เบส (mol/L)<input id='ti_cb' inputmode='decimal' value='0.1'></label><label>V เบสที่เติม (mL)<input id='ti_vb' inputmode='decimal' value='20'></label><label>OH⁻ ต่อเบส 1 สูตร<select id='ti_nb'><option>1</option><option>2</option></select></label></div>
+<button class='btn pri' id='tigo'>คำนวณและวาดกราฟ</button><div class='rxout' id='ti_out'></div></div>
+<div class='card'><h2>🛡️ สารละลายบัฟเฟอร์ (Henderson–Hasselbalch)</h2><p class='sub' style='margin:0 0 8px'>pH = pKa + log([A⁻] ÷ [HA]) — ใส่ปริมาณเป็น mmol (หรือความเข้มข้นก็ได้ถ้าปริมาตรเท่ากัน)</p>
+<div class='fld'><label>คู่บัฟเฟอร์ตัวอย่าง<select id='bfpre'></select></label><label>pKa<input id='bfp' inputmode='decimal' value='4.76'></label></div>
+<div class='fld'><label>ปริมาณ A⁻ (เบสคู่สบ)<input id='bfa' inputmode='decimal' value='10'></label><label>ปริมาณ HA (กรดอ่อน)<input id='bfh' inputmode='decimal' value='10'></label><label>เติม H⁺ (+) / OH⁻ (−) mmol<input id='bfx' inputmode='decimal' value='1'></label></div>
+<button class='btn pri' id='bfgo'>คำนวณ pH</button><div class='rxout' id='bfout'></div></div>
+</div>
+<div id='tab7' hidden>
+<div class='card'><h2>☕ สนับสนุนผู้พัฒนา</h2><p class='sub' style='margin:0 0 6px'>เว็บนี้ใช้ได้ฟรี ถ้าเป็นประโยชน์ ร่วมสนับสนุนค่าพัฒนาต่อได้ตามสะดวก ไม่มีบังคับ</p><p id='donMsg' style='margin:0'></p></div>
+<div class='card' id='donEmpty'><span class='empty'>ช่องทางสนับสนุนจะเปิดให้บริการเร็ว ๆ นี้ 🙏</span></div>
+<div class='card' id='donPP' hidden><h2>📱 PromptPay (สแกนจ่าย)</h2><div class='amts' id='donAm'></div><div style='text-align:center'><div class='qrbox' id='donQR'></div><p class='empty' style='margin:8px 0 0'>สแกนด้วยแอปธนาคาร · พร้อมเพย์ <b id='donPPno'></b></p></div></div>
+<div class='card' id='donBank' hidden><h2>🏦 โอนผ่านบัญชีธนาคาร</h2><div id='donBankL'></div></div>
+<div class='card' id='donLinks' hidden><h2>🔗 ช่องทางอื่น</h2><div id='donLk'></div></div>
+</div>
+<footer class='foot'><span>⚗️ ห้องทดลองเคมีออนไลน์ · ใช้ฟรี</span><button class='btn' id='footDon'>☕ สนับสนุนผู้พัฒนา</button></footer>
+</main>
+
+<script>
+const RAW="H|1.008|ไฮโดรเจน;He|4.0026|ฮีเลียม;Li|6.94|ลิเทียม;Be|9.012|เบริลเลียม;B|10.81|โบรอน;C|12.011|คาร์บอน;N|14.007|ไนโตรเจน;O|15.999|ออกซิเจน;F|18.998|ฟลูออรีน;Ne|20.18|นีออน;Na|22.99|โซเดียม;Mg|24.305|แมกนีเซียม;Al|26.982|อะลูมิเนียม;Si|28.085|ซิลิคอน;P|30.974|ฟอสฟอรัส;S|32.06|กำมะถัน;Cl|35.45|คลอรีน;Ar|39.948|อาร์กอน;K|39.098|โพแทสเซียม;Ca|40.078|แคลเซียม;Sc|44.956|สแกนเดียม;Ti|47.867|ไทเทเนียม;V|50.942|วาเนเดียม;Cr|51.996|โครเมียม;Mn|54.938|แมงกานีส;Fe|55.845|เหล็ก;Co|58.933|โคบอลต์;Ni|58.693|นิกเกิล;Cu|63.546|ทองแดง;Zn|65.38|สังกะสี;Ga|69.723|แกลเลียม;Ge|72.63|เจอร์เมเนียม;As|74.922|สารหนู;Se|78.971|ซีลีเนียม;Br|79.904|โบรมีน;Kr|83.798|คริปทอน;Rb|85.468|รูบิเดียม;Sr|87.62|สตรอนเชียม;Y|88.906|อิตเทรียม;Zr|91.224|เซอร์โคเนียม;Nb|92.906|ไนโอเบียม;Mo|95.95|โมลิบดีนัม;Tc|98|เทคนีเชียม;Ru|101.07|รูทีเนียม;Rh|102.91|โรเดียม;Pd|106.42|แพลเลเดียม;Ag|107.87|เงิน;Cd|112.41|แคดเมียม;In|114.82|อินเดียม;Sn|118.71|ดีบุก;Sb|121.76|พลวง;Te|127.6|เทลลูเรียม;I|126.9|ไอโอดีน;Xe|131.29|ซีนอน;Cs|132.91|ซีเซียม;Ba|137.33|แบเรียม;Au|196.97|ทอง;Hg|200.59|ปรอท;Pb|207.2|ตะกั่ว";
+const EL={};
+RAW.split(";").forEach((s,i)=>{const[a,m,n]=s.split("|");EL[a]={s:a,m:+m,n,z:i+1}});
+const XTRA={Cs:[1,6],Ba:[2,6],Au:[11,6],Hg:[12,6],Pb:[14,6]};
+function pos(e){
+  if(XTRA[e.s])return XTRA[e.s];
+  const z=e.z;
+  if(z==1)return[1,1];if(z==2)return[18,1];
+  if(z<=10)return[z<=4?z-2:z+8,2];
+  if(z<=18)return[z<=12?z-10:z-0,3];
+  if(z<=36)return[z-18,4];
+  return[z-36,5];
+}
+const SETS={alk:"Li Na K Rb Cs",ae:"Be Mg Ca Sr Ba",hal:"F Cl Br I",nob:"He Ne Ar Kr Xe",meta:"B Si Ge As Sb Te",non:"H C N O P S Se",post:"Al Ga In Sn Pb"};
+const NAMES={alk:"โลหะอัลคาไล",ae:"อัลคาไลน์เอิร์ท",tr:"โลหะทรานซิชัน",post:"โลหะหลังทรานซิชัน",meta:"กึ่งโลหะ",non:"อโลหะ",hal:"ฮาโลเจน",nob:"แก๊สมีตระกูล"};
+function cat(s){for(const k in SETS)if(SETS[k].split(" ").includes(s))return k;return"tr"}
+
+const DB=[["H2","แก๊สไฮโดรเจน"],["O2","แก๊สออกซิเจน"],["O3","โอโซน"],["N2","แก๊สไนโตรเจน"],["Cl2","แก๊สคลอรีน"],["F2","แก๊สฟลูออรีน"],["Br2","โบรมีน"],["I2","ไอโอดีน"],["P4","ฟอสฟอรัสขาว"],["S8","กำมะถัน"],
+["H2O","น้ำ"],["H2O2","ไฮโดรเจนเปอร์ออกไซด์"],["CO2","คาร์บอนไดออกไซด์"],["CO","คาร์บอนมอนอกไซด์"],["NaCl","โซเดียมคลอไรด์ (เกลือแกง)"],["NH3","แอมโมเนีย"],["CH4","มีเทน"],["C2H6","อีเทน"],["C3H8","โพรเพน"],["C4H10","บิวเทน"],["C2H4","เอทิลีน"],["C2H2","อะเซทิลีน"],["C6H6","เบนซีน"],["CH4O","เมทานอล"],["C2H6O","เอทานอล (แอลกอฮอล์)"],["C2H4O2","กรดแอซิติก (น้ำส้มสายชู)"],["CH2O","ฟอร์มาลดีไฮด์"],["C6H12O6","กลูโคส"],["C12H22O11","ซูโครส (น้ำตาลทราย)"],
+["HCl","กรดไฮโดรคลอริก"],["H2SO4","กรดซัลฟิวริก"],["HNO3","กรดไนทริก"],["H3PO4","กรดฟอสฟอริก"],["H2CO3","กรดคาร์บอนิก"],["H2S","ไฮโดรเจนซัลไฟด์"],["HF","กรดไฮโดรฟลูออริก"],["HBr","กรดไฮโดรโบรมิก"],["HI","ไฮโดรเจนไอโอไดด์"],
+["NaOH","โซเดียมไฮดรอกไซด์ (โซดาไฟ)"],["KOH","โพแทสเซียมไฮดรอกไซด์"],["Ca(OH)2","แคลเซียมไฮดรอกไซด์ (ปูนขาว)"],["Mg(OH)2","แมกนีเซียมไฮดรอกไซด์"],
+["Na2O","โซเดียมออกไซด์"],["K2O","โพแทสเซียมออกไซด์"],["Li2O","ลิเทียมออกไซด์"],["CaO","แคลเซียมออกไซด์ (ปูนสุก)"],["MgO","แมกนีเซียมออกไซด์"],["Al2O3","อะลูมิเนียมออกไซด์"],["SiO2","ซิลิคอนไดออกไซด์ (ทราย)"],["FeO","เหล็ก(II) ออกไซด์"],["Fe2O3","เหล็ก(III) ออกไซด์ (สนิม)"],["Fe3O4","เหล็ก(II,III) ออกไซด์"],["CuO","คอปเปอร์(II) ออกไซด์"],["Cu2O","คอปเปอร์(I) ออกไซด์"],["ZnO","ซิงก์ออกไซด์"],["SO2","ซัลเฟอร์ไดออกไซด์"],["SO3","ซัลเฟอร์ไตรออกไซด์"],["NO","ไนตริกออกไซด์"],["NO2","ไนโตรเจนไดออกไซด์"],["N2O","ไนตรัสออกไซด์ (แก๊สหัวเราะ)"],
+["MgCl2","แมกนีเซียมคลอไรด์"],["CaCl2","แคลเซียมคลอไรด์"],["KCl","โพแทสเซียมคลอไรด์"],["NaF","โซเดียมฟลูออไรด์"],["KI","โพแทสเซียมไอโอไดด์"],["AgCl","ซิลเวอร์คลอไรด์"],["FeCl3","เหล็ก(III) คลอไรด์"],["ZnCl2","ซิงก์คลอไรด์"],["AlCl3","อะลูมิเนียมคลอไรด์"],
+["Na2CO3","โซเดียมคาร์บอเนต (โซดาแอช)"],["NaHCO3","โซเดียมไบคาร์บอเนต (เบกกิงโซดา)"],["CaCO3","แคลเซียมคาร์บอเนต (หินปูน)"],["KNO3","โพแทสเซียมไนเทรต (ดินประสิว)"],["NaNO3","โซเดียมไนเทรต"],["AgNO3","ซิลเวอร์ไนเทรต"],["CuSO4","คอปเปอร์(II) ซัลเฟต (จุนสี)"],["MgSO4","แมกนีเซียมซัลเฟต"],["CaSO4","แคลเซียมซัลเฟต (ยิปซัม)"],["Na2SO4","โซเดียมซัลเฟต"],["KMnO4","โพแทสเซียมเปอร์แมงกาเนต"]];
+
+function parse(f){const st=[{}];const re=/([A-Z][a-z]?)(\d*)|(\()|\)(\d*)/g;let m;
+  while(m=re.exec(f)){if(m[1]){const o=st[st.length-1];o[m[1]]=(o[m[1]]||0)+(+m[2]||1)}
+  else if(m[3])st.push({});else{const t=st.pop(),n=+m[4]||1,o=st[st.length-1];for(const k in t)o[k]=(o[k]||0)+t[k]*n}}
+  return st[0]}
+const key=o=>Object.keys(o).sort().map(k=>k+o[k]).join("");
+const IDX={};DB.forEach(([f,n])=>{(IDX[key(parse(f))]=IDX[key(parse(f))]||[]).push([f,n])});
+const sub=f=>f.replace(/(\d+)/g,"<sub>$1</sub>");
+function hill(o){let ks=Object.keys(o).sort();if(o.C){ks=["C",...(o.H?["H"]:[]),...ks.filter(k=>k!="C"&&k!="H")]}
+  return ks.map(k=>k+(o[k]>1?o[k]:"")).join("")}
+
+const flask={};
+const $=id=>document.getElementById(id);
+const pt=$("pt");
+Object.values(EL).forEach(e=>{
+  const[c,r]=pos(e);const b=document.createElement("button");
+  b.className="el";b.id="e"+e.s;b.style.gridColumn=c;b.style.gridRow=r;
+  b.style.background=`var(--${cat(e.s)})`;
+  b.title=e.n+" ("+e.m+")";
+  b.innerHTML=`<small>${e.z}</small><b>${e.s}</b>`;
+  b.onclick=()=>{flask[e.s]=Math.min(99,(flask[e.s]||0)+1);draw()};
+  pt.appendChild(b)});
+$("lg").innerHTML=Object.keys(NAMES).map(k=>`<span><i style="background:var(--${k})"></i>${NAMES[k]}</span>`).join("");
+
+function draw(){
+  document.querySelectorAll(".el").forEach(b=>{b.classList.remove("sel");const n=b.querySelector(".n");n&&n.remove()});
+  const ks=Object.keys(flask);
+  ks.forEach(k=>{const b=$("e"+k);b.classList.add("sel");const n=document.createElement("span");n.className="n";n.textContent=flask[k];b.appendChild(n)});
+  $("chips").innerHTML=ks.length?ks.map(k=>`<div class="chip"><b>${k}</b><span class="empty">${EL[k].n}</span><button data-k="${k}" data-d="-1">−</button><b>${flask[k]}</b><button data-k="${k}" data-d="1">+</button></div>`).join(""):'<span class="empty">ขวดยังว่างอยู่ — แตะธาตุในตารางธาตุ</span>'}
+$("chips").onclick=e=>{const b=e.target.closest("button");if(!b)return;const k=b.dataset.k;flask[k]+=+b.dataset.d;if(flask[k]<1)delete flask[k];if(flask[k]>99)flask[k]=99;draw()};
+$("clr").onclick=()=>{for(const k in flask)delete flask[k];draw();$("res").innerHTML='<span class="empty">ล้างขวดแล้ว</span>'};
+const EXS=[["น้ำ","H2O"],["เกลือแกง","NaCl"],["แอมโมเนีย","NH3"],["มีเทน","CH4"],["สนิมเหล็ก","Fe2O3"],["กลูโคส","C6H12O6"],["กรดซัลฟิวริก","H2SO4"]];
+$("ex").innerHTML='<span class="empty" style="align-self:center">ลองตัวอย่าง:</span>'+EXS.map(([n,f])=>`<button class="btn" data-f="${f}">${n}</button>`).join("");
+$("ex").onclick=e=>{const b=e.target.closest("button");if(!b)return;for(const k in flask)delete flask[k];Object.assign(flask,parse(b.dataset.f));draw();mix()};
+
+function mix(){
+  const ks=Object.keys(flask),R=$("res");
+  if(!ks.length){R.innerHTML='<span class="empty">ขวดว่างอยู่ — เลือกธาตุก่อนนะ</span>';return}
+  const mass=ks.reduce((s,k)=>s+EL[k].m*flask[k],0);
+  const hits=IDX[key(flask)]||[];
+  let head;
+  if(hits.length){
+    head=`<span class="tag">✅ พบสารที่รู้จัก</span><p class="f">${sub(hits[0][0])}</p><div class="nm">${hits[0][1]}</div>`;
+    if(hits.length>1)head+=`<div class="alt">สูตรโมเลกุลเดียวกันยังเป็น: ${hits.slice(1).map(h=>`${sub(h[0])} (${h[1]})`).join(", ")}</div>`;
+  }else if(ks.length==1&&flask[ks[0]]==1){
+    head=`<span class="tag">ธาตุเดี่ยว</span><p class="f">${ks[0]}</p><div class="nm">${EL[ks[0]].n}</div>`;
+  }else{
+    head=`<span class="tag">⚠️ ไม่พบในฐานข้อมูล</span><p class="f">${sub(hill(flask))}</p><div class="nm">สูตรเคมีตามอัตราส่วนที่เลือก</div><div class="empty">สารนี้อาจไม่เสถียรหรือไม่มีอยู่จริง ลองปรับจำนวนอะตอม</div>`;
+  }
+  const bar=ks.map(k=>`<div title="${k}" style="width:${EL[k].m*flask[k]/mass*100}%;background:var(--${cat(k)})"></div>`).join("");
+  const pct=ks.map(k=>`<span>${k}: ${(EL[k].m*flask[k]/mass*100).toFixed(2)}%</span>`).join("");
+  R.innerHTML=`${head}<p style="margin:10px 0 0"><b>มวลโมเลกุล:</b> ${mass.toFixed(3)} g/mol</p><div class="bar">${bar}</div><div class="pct">${pct}</div>`;
+  R.classList.remove("pop");void R.offsetWidth;R.classList.add("pop");
+}
+$("mix").onclick=mix;
+
+/* ===== ผสมสูตรเคมี ===== */
+const REAC=`2H2+O2=2H2O
+H2+Cl2=2HCl
+N2+3H2=2NH3
+N2+O2=2NO
+2NO+O2=2NO2
+3NO2+H2O=2HNO3+NO
+C+O2=CO2
+2CO+O2=2CO2
+S+O2=SO2
+2SO2+O2=2SO3
+SO3+H2O=H2SO4
+CO2+H2O=H2CO3
+CaO+H2O=Ca(OH)2
+Ca(OH)2+CO2=CaCO3+H2O
+CaCO3=CaO+CO2
+2H2O2=2H2O+O2
+2Mg+O2=2MgO
+4Fe+3O2=2Fe2O3
+2Na+Cl2=2NaCl
+2Na+2H2O=2NaOH+H2
+2Al+3Cl2=2AlCl3
+2Fe+3Cl2=2FeCl3
+CH4+2O2=CO2+2H2O
+C3H8+5O2=3CO2+4H2O
+C2H6O+3O2=2CO2+3H2O
+C6H12O6+6O2=6CO2+6H2O
+HCl+NaOH=NaCl+H2O
+HNO3+KOH=KNO3+H2O
+H2SO4+2NaOH=Na2SO4+2H2O
+MgO+2HCl=MgCl2+H2O
+Na2CO3+2HCl=2NaCl+H2O+CO2
+NaHCO3+HCl=NaCl+H2O+CO2
+CaCO3+2HCl=CaCl2+H2O+CO2
+Zn+2HCl=ZnCl2+H2
+Fe+2HCl=FeCl2+H2
+NH3+HCl=NH4Cl
+AgNO3+NaCl=AgCl+NaNO3
+2KI+Cl2=2KCl+I2
+CuSO4+Zn=ZnSO4+Cu
+Fe2O3+3CO=2Fe+3CO2`.split("\n");
+const tm=t=>{const m=t.match(/^(\d*)(.+)$/);return{c:+m[1]||1,f:m[2]}};
+const RX={};
+REAC.forEach(l=>{const[a,b]=l.split("=");const R=a.split("+").map(tm),P=b.split("+").map(tm);RX[R.map(t=>key(parse(t.f))).sort().join("|")]={R,P}});
+const fmass=f=>Object.entries(parse(f)).reduce((s,[k,n])=>s+EL[k].m*n,0);
+const nameOf=f=>{const o=parse(f),h=IDX[key(o)];if(h)return h[0][1];const k=Object.keys(o);return k.length==1&&o[k[0]]==1?EL[k[0]].n:""};
+const valid=f=>{const s=f.replace(/^\d+/,"");return /^(?:[A-Z][a-z]?\d*|\(|\)\d*)+$/.test(s)&&(s.match(/\(/g)||[]).length==(s.match(/\)/g)||[]).length&&Object.keys(parse(s)).every(k=>EL[k])};
+const side=L=>L.map(t=>(t.c>1?t.c+" ":"")+sub(t.f)).join(" + ");
+let rxs=["",""];
+function rxDraw(){$("rx").innerHTML=rxs.map((v,i)=>`<div class="rxrow"><input list="dl" data-i="${i}" value="${v.replace(/"/g,"&quot;")}" placeholder="สูตรเคมีที่ ${i+1} เช่น ${["H2","O2","HCl","NaOH"][i%4]}" autocapitalize="off" autocomplete="off">${rxs.length>2?`<button class="btn" data-x="${i}">✕</button>`:""}</div>`).join("")}
+$("dl").innerHTML=DB.map(([f,n])=>`<option value="${f}">${n}</option>`).join("")+Object.keys(EL).map(s=>`<option value="${s}">${EL[s].n}</option>`).join("");
+$("rx").oninput=e=>{if(e.target.dataset.i!=null)rxs[+e.target.dataset.i]=e.target.value};
+$("rx").onclick=e=>{const b=e.target.closest("[data-x]");if(b){rxs.splice(+b.dataset.x,1);rxDraw()}};
+$("rx").onkeydown=e=>{if(e.key=="Enter")rxGo()};
+$("rxAdd").onclick=()=>{if(rxs.length<6){rxs.push("");rxDraw()}};
+$("rxGo").onclick=()=>rxGo();
+const RXEX=[["H₂ + O₂","H2,O2"],["HCl + NaOH","HCl,NaOH"],["CH₄ + O₂","CH4,O2"],["N₂ + H₂","N2,H2"],["Na + H₂O","Na,H2O"],["AgNO₃ + NaCl","AgNO3,NaCl"]];
+$("rxEx").innerHTML='<span class="empty" style="align-self:center">ลองตัวอย่าง:</span>'+RXEX.map(([n,v])=>`<button class="btn" data-v="${v}">${n}</button>`).join("");
+$("rxEx").onclick=e=>{const b=e.target.closest("button");if(!b)return;rxs=b.dataset.v.split(",");rxDraw();rxGo()};
+function rxGo(){
+  const out=$("rxOut"),fs=rxs.map(s=>s.trim()).filter(Boolean);
+  if(!fs.length){out.innerHTML='<span class="err">กรุณาใส่สูตรเคมีอย่างน้อย 2 ชนิด</span>';return}
+  try{
+    const bad=fs.find(f=>!valid(f));
+    if(bad){out.innerHTML=`<span class="err">สูตร “${bad.replace(/[<>&]/g,"")}” ไม่ถูกต้อง หรือมีธาตุที่ยังไม่รองรับ (ธาตุต้องขึ้นต้นด้วยตัวพิมพ์ใหญ่ เช่น NaCl)</span>`;return}
+    const r=RX[fs.map(f=>key(parse(f))).sort().join("|")];
+    let h;
+    if(r){
+      const mr=r.R.reduce((s,t)=>s+t.c*fmass(t.f),0),mp=r.P.reduce((s,t)=>s+t.c*fmass(t.f),0);
+      h=`<span class="tag">✅ เกิดปฏิกิริยา</span><div class="eq">${side(r.R)} → ${side(r.P)}</div>`
+       +r.P.map(t=>`<div class="prod"><b>${sub(t.f)}</b> ${nameOf(t.f)?"— "+nameOf(t.f):""}</div>`).join("")
+       +`<p style="margin:10px 0 0;color:var(--mut);font-size:.9rem">สมการดุลแล้ว: มวลสารตั้งต้น ${mr.toFixed(2)} g/mol = มวลผลิตภัณฑ์ ${mp.toFixed(2)} g/mol</p>`;
+    }else if(fs.length<2){
+      h='<span class="err">กรุณาใส่สูตรอย่างน้อย 2 ชนิดเพื่อผสมกัน</span>';
+    }else{
+      const tot={};fs.forEach(f=>{const o=parse(f);for(const k in o)tot[k]=(tot[k]||0)+o[k]});
+      const hit=IDX[key(tot)],ms=Object.keys(tot).reduce((s,k)=>s+EL[k].m*tot[k],0);
+      h=`<span class="tag">⚠️ ไม่พบปฏิกิริยาที่รู้จัก</span><p style="margin:8px 0 4px">รวมอะตอมของสารทั้งหมดได้สูตร</p><div class="eq">${sub(hit?hit[0][0]:hill(tot))}</div>`
+       +(hit?`<div class="nm">${hit[0][1]}</div>`:"")
+       +`<p style="margin:8px 0 0;color:var(--mut);font-size:.9rem">มวลรวม ${ms.toFixed(3)} g/mol — สารเหล่านี้อาจไม่ทำปฏิกิริยากัน หรือยังไม่มีอยู่ในฐานข้อมูล</p>`;
+    }
+    out.innerHTML=h;
+  }catch(err){out.innerHTML='<span class="err">อ่านสูตรไม่ได้ ตรวจสอบวงเล็บและตัวอักษรอีกครั้ง</span>'}
+}
+rxDraw();
+draw();
+
+/* ===== แท็บ + คำนวณโมล ===== */
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x==b));['tab1','tab2','tab3','tab4','tab5','tab6'].forEach(id=>$(id).hidden=id!=b.dataset.t)});
+const NA=6.022e23;
+function f5(x){if(!isFinite(x))return '—';if(x===0)return '0';const a=Math.abs(x);if(a>=1e6||a<1e-3){const p=x.toExponential(3).split('e');return p[0]+' × 10<sup>'+(+p[1])+'</sup>'}return String(+x.toPrecision(5))}
+const num=v=>{const s=String(v).trim();return s===''?NaN:Number(s)};
+const us=f=>f.replace(/\d/g,d=>'₀₁₂₃₄₅₆₇₈₉'[d]);
+const tr2=(a,b,c)=>`<tr><td>${a}</td><td><b>${b}</b></td><td>${c}</td></tr>`;
+const ERR=m=>`<span class='err'>${m}</span>`;
+$('mcalc').onclick=()=>{
+  const o=$('mout'),f=$('mf').value.trim(),v=num($('mv').value),kd=$('mk').value;
+  try{
+    if(!f||!valid(f)){o.innerHTML=ERR('สูตรเคมีไม่ถูกต้อง (เช่น H2O, NaCl, Ca(OH)2)');return}
+    if(!(v>=0)){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง (เช่น 36 หรือ 6.02e23)');return}
+    const M=fmass(f),at=parse(f);let n,st;
+    if(kd=='m'){n=v/M;st='n = m ÷ M = '+f5(v)+' ÷ '+f5(M)}
+    else if(kd=='n'){n=v;st='ค่าที่ให้มา'}
+    else if(kd=='N'){n=v/NA;st='n = N ÷ N<sub>A</sub> = '+f5(v)+' ÷ 6.022×10<sup>23</sup>'}
+    else{n=v/22.4;st='n = V ÷ 22.4 = '+f5(v)+' ÷ 22.4'}
+    let rows=tr2('จำนวนโมล n',f5(n)+' mol',st)+tr2('มวล m',f5(n*M)+' g','m = n × M = '+f5(n)+' × '+f5(M))+tr2('จำนวนอนุภาค N',f5(n*NA),'N = n × N<sub>A</sub>')+tr2('ปริมาตรแก๊ส (STP)',f5(n*22.4)+' L','V = n × 22.4 (ใช้ได้เมื่อสารเป็นแก๊ส)');
+    const ks=Object.keys(at);
+    ks.forEach(e=>{if(ks.length>1||at[e]>1)rows+=tr2('อะตอม '+e,f5(n*NA*at[e]),'N × '+at[e])});
+    o.innerHTML=`<p style='margin:0'>มวลโมลาร์ M ของ <b>${sub(f)}</b> = <b>${f5(M)}</b> g/mol</p><table class='rs'>${rows}</table>`;
+  }catch(e){o.innerHTML=ERR('อ่านสูตรไม่ได้')}
+};
+$('scalc').onclick=()=>{
+  const ids=['sn','sc','sv'],raw=ids.map(i=>$(i).value.trim()),b=raw.map((r,i)=>r===''?i:-1).filter(i=>i>=0),o=$('sout');
+  if(b.length!=1){o.innerHTML=ERR('เว้นว่างไว้ 1 ช่องที่ต้องการหา และกรอกอีก 2 ช่อง');return}
+  const v=raw.map(num);
+  if(v.some((x,i)=>i!=b[0]&&!(x>=0))){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง');return}
+  const t=[()=>[v[1]*v[2],'n = C × V = '+f5(v[1])+' × '+f5(v[2]),'mol'],()=>[v[0]/v[2],'C = n ÷ V = '+f5(v[0])+' ÷ '+f5(v[2]),'mol/L'],()=>[v[0]/v[1],'V = n ÷ C = '+f5(v[0])+' ÷ '+f5(v[1]),'L']][b[0]]();
+  o.innerHTML=`<p class='eq' style='font-size:1.3rem'>${['n','C','V'][b[0]]} = ${f5(t[0])} ${t[2]}</p><p class='empty'>${t[1]}</p>`;
+};
+$('dcalc').onclick=()=>{
+  const ids=['dc1','dv1','dc2','dv2'],nm=['C₁','V₁','C₂','V₂'],raw=ids.map(i=>$(i).value.trim()),b=raw.map((r,i)=>r===''?i:-1).filter(i=>i>=0),o=$('dout');
+  if(b.length!=1){o.innerHTML=ERR('เว้นว่างไว้ 1 ช่องที่ต้องการหา และกรอกอีก 3 ช่อง');return}
+  const v=raw.map(num),i=b[0];
+  if(v.some((x,j)=>j!=i&&!(x>0))){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง (มากกว่า 0)');return}
+  const x=[v[2]*v[3]/v[1],v[2]*v[3]/v[0],v[0]*v[1]/v[3],v[0]*v[1]/v[2]][i];
+  o.innerHTML=`<p class='eq' style='font-size:1.3rem'>${nm[i]} = ${f5(x)}</p><p class='empty'>จาก C₁V₁ = C₂V₂</p>`;
+};
+const RXL=REAC.map(l=>{const s=l.split('=');return{R:s[0].split('+').map(tm),P:s[1].split('+').map(tm)}});
+const pl=L=>L.map(t=>(t.c>1?t.c+' ':'')+us(t.f)).join(' + ');
+$('rs').innerHTML=RXL.map((r,i)=>`<option value='${i}'>${pl(r.R)} → ${pl(r.P)}</option>`).join('');
+function spFill(){const r=RXL[+$('rs').value];$('sp').innerHTML=[...r.R,...r.P].map((t,i)=>`<option value='${i}'>${us(t.f)}</option>`).join('')}
+$('rs').onchange=spFill;spFill();
+
+/* ===== ดุลสมการ ===== */
+const gcd=(a,b)=>b?gcd(b,a%b):Math.abs(a);
+function balance(L,nR){
+  const els=[...new Set(L.flatMap(f=>Object.keys(parse(f))))],n=L.length;
+  const A=els.map(e=>L.map((f,j)=>(parse(f)[e]||0)*(j<nR?1:-1)));
+  const piv=[];let r=0;
+  for(let c=0;c<n&&r<A.length;c++){
+    const p=A.findIndex((row,i)=>i>=r&&row[c]!=0);if(p<0)continue;
+    [A[r],A[p]]=[A[p],A[r]];
+    for(let i=0;i<A.length;i++){
+      if(i==r||A[i][c]==0)continue;
+      const a=A[r][c],b=A[i][c];
+      A[i]=A[i].map((x,j)=>x*a-A[r][j]*b);
+      const g=A[i].reduce(gcd,0);if(g>1)A[i]=A[i].map(x=>x/g);
+    }
+    piv.push(c);r++;
+  }
+  const free=[...Array(n).keys()].filter(c=>!piv.includes(c));
+  if(free.length!=1)return free.length?'many':null;
+  const f=free[0];let lcm=1;
+  piv.forEach((c,i)=>{const d=Math.abs(A[i][c]);lcm=lcm/gcd(lcm,d)*d});
+  let x=Array(n).fill(0);x[f]=lcm;
+  piv.forEach((c,i)=>{x[c]=-A[i][f]*lcm/A[i][c]});
+  const g=x.reduce(gcd,0);x=x.map(v=>v/g);
+  if(x.every(v=>v<=0))x=x.map(v=>-v);
+  return x.every(v=>v>0)?x:null;
+}
+function bal(){
+  const o=$('bout'),p=$('bq').value.trim().split(/->|→|=>|=/);
+  if(p.length!=2||!p[0].trim()||!p[1].trim()){o.innerHTML=ERR('ใส่สมการในรูป สารตั้งต้น -> ผลิตภัณฑ์ (คั่นสารด้วย +)');return}
+  try{
+    const sides=p.map(x=>x.split('+').map(t=>t.trim().replace(/^\d+\s*/,''))),all=sides.flat(),bad=all.find(f=>!f||!valid(f));
+    if(bad!==undefined){o.innerHTML=ERR('สูตร “'+bad.replace(/[<>&]/g,'')+'” ไม่ถูกต้องหรือมีธาตุที่ยังไม่รองรับ');return}
+    const x=balance(all,sides[0].length);
+    if(x==='many'){o.innerHTML=ERR('สมการนี้ดุลได้หลายรูปแบบ (สารบางตัวไม่เกี่ยวข้องกัน) ลองตรวจสอบสูตรอีกครั้ง');return}
+    if(!x){o.innerHTML=ERR('ไม่สามารถดุลสมการนี้ได้ — ตรวจสอบว่าธาตุแต่ละชนิดอยู่ทั้งสองข้างและสูตรถูกต้อง');return}
+    const n0=sides[0].length,T=all.map((f,i)=>({c:x[i],f})),R=T.slice(0,n0),P=T.slice(n0),els=[...new Set(all.flatMap(f=>Object.keys(parse(f))))];
+    const cnt=(L,e)=>L.reduce((s,t)=>s+t.c*(parse(t.f)[e]||0),0);
+    const chk=els.map(e=>{const a=cnt(R,e),b=cnt(P,e);return `<span class='tag'>${e}: ${a} = ${b} ${a==b?'✓':'✗'}</span>`}).join(' ');
+    o.innerHTML=`<span class='tag'>✅ ดุลสมการแล้ว</span><div class='eq'>${side(R)} → ${side(P)}</div>`+T.map(t=>`<div class='prod'><b>${t.c>1?t.c+' ':''}${sub(t.f)}</b>${nameOf(t.f)?' — '+nameOf(t.f):''}</div>`).join('')+`<p style='margin:10px 0 4px;color:var(--mut);font-size:.9rem'>ตรวจสอบจำนวนอะตอมซ้าย = ขวา:</p><div class='pct'>${chk}</div>`;
+  }catch(e){o.innerHTML=ERR('อ่านสมการไม่ได้ ตรวจสอบวงเล็บและตัวอักษรอีกครั้ง')}
+}
+$('bgo').onclick=bal;
+$('bq').onkeydown=e=>{if(e.key=='Enter')bal()};
+const BEX=[['เหล็กเป็นสนิม','Fe + O2 -> Fe2O3'],['เผาโพรเพน','C3H8 + O2 -> CO2 + H2O'],['กลูโคส','C6H12O6 + O2 -> CO2 + H2O'],['Al + HCl','Al + HCl -> AlCl3 + H2'],['โซเดียมกับน้ำ','Na + H2O -> NaOH + H2'],['ปูนขาว + กรดฟอสฟอริก','Ca(OH)2 + H3PO4 -> Ca3(PO4)2 + H2O']];
+$('bex').innerHTML='<span class="empty" style="align-self:center">ลองตัวอย่าง:</span>'+BEX.map(([n,v])=>`<button class='btn' data-v='${v}'>${n}</button>`).join('');
+$('bex').onclick=e=>{const b=e.target.closest('button');if(!b)return;$('bq').value=b.dataset.v;bal()};
+
+/* ===== โมลาริตี / โมแลลิตี ===== */
+$('ccalc').onclick=()=>{
+  const o=$('cout'),f=$('cf').value.trim(),m=num($('cm').value),V=num($('cv').value),S=num($('cs').value);
+  try{
+    if(!f||!valid(f)){o.innerHTML=ERR('สูตรเคมีไม่ถูกต้อง (เช่น NaCl, NaOH, H2SO4)');return}
+    if(!(m>=0)){o.innerHTML=ERR('กรุณาใส่มวลตัวถูกละลายเป็นตัวเลข');return}
+    const M=fmass(f),n=m/M;
+    let rows=tr2('จำนวนโมล n',f5(n)+' mol','n = m ÷ M = '+f5(m)+' ÷ '+f5(M));
+    if(V>0)rows+=tr2('โมลาริตี M',f5(n/(V/1000))+' mol/L','M = n ÷ V(L) = '+f5(n)+' ÷ '+f5(V/1000));
+    if(S>0){
+      rows+=tr2('โมแลลิตี m',f5(n/(S/1000))+' mol/kg','m = n ÷ มวลตัวทำละลาย(kg) = '+f5(n)+' ÷ '+f5(S/1000));
+      rows+=tr2('ร้อยละโดยมวล',f5(m/(m+S)*100)+' %','มวลตัวถูกละลาย ÷ (ตัวถูกละลาย + ตัวทำละลาย) × 100');
+      rows+=tr2('เศษส่วนโมลของตัวถูกละลาย',f5(n/(n+S/18.015)),'X = n ÷ (n + n<sub>น้ำ</sub>) (สมมติตัวทำละลายเป็นน้ำ)');
+    }
+    if(!(V>0)&&!(S>0))rows+=tr2('หมายเหตุ','—','กรอกปริมาตรสารละลาย (หา M) หรือมวลตัวทำละลาย (หา m) อย่างน้อย 1 ช่อง');
+    o.innerHTML=`<p style='margin:0'>M ของ <b>${sub(f)}</b> = <b>${f5(M)}</b> g/mol</p><table class='rs'>${rows}</table>`;
+  }catch(e){o.innerHTML=ERR('อ่านสูตรไม่ได้')}
+};
+/* ===== อินทรีย์ / พอลิเมอร์ ===== */
+const STEM=['meth','eth','prop','but','pent','hex','hept','oct','non','dec'];
+const BP=[-162,-89,-42,-1,36,69,98,126,151,174],ISO=[1,1,1,2,3,5,9,18,35,75];
+const FAM={
+  alkane:{t:'แอลเคน',g:'CₙH₂ₙ₊₂',h:n=>2*n+2,o:0,cl:0,min:1,bd:'พันธะเดี่ยว C–C ทั้งหมด (อิ่มตัว)'},
+  alkene:{t:'แอลคีน',g:'CₙH₂ₙ',h:n=>2*n,o:0,cl:0,min:2,bd:'มีพันธะคู่ C=C (ไม่อิ่มตัว) ฟอกสีน้ำโบรมีนได้'},
+  alkyne:{t:'แอลไคน์',g:'CₙH₂ₙ₋₂',h:n=>2*n-2,o:0,cl:0,min:2,bd:'มีพันธะสาม C≡C (ไม่อิ่มตัว)'},
+  alcohol:{t:'แอลกอฮอล์',g:'CₙH₂ₙ₊₂O',h:n=>2*n+2,o:1,cl:0,min:1,bd:'หมู่ไฮดรอกซิล –OH เกิดพันธะไฮโดรเจนได้ จุดเดือดสูง'},
+  aldehyde:{t:'แอลดีไฮด์',g:'CₙH₂ₙO',h:n=>2*n,o:1,cl:0,min:1,bd:'หมู่คาร์บอนิลที่ปลายสาย –CHO'},
+  acid:{t:'กรดคาร์บอกซิลิก',g:'CₙH₂ₙO₂',h:n=>2*n,o:2,cl:0,min:1,bd:'หมู่คาร์บอกซิล –COOH ให้โปรตอนได้ (กรดอ่อน)'},
+  halo:{t:'เฮโลแอลเคน',g:'CₙH₂ₙ₊₁Cl',h:n=>2*n+1,o:0,cl:1,min:1,bd:'มีอะตอมคลอรีนแทนที่ไฮโดรเจน –Cl'}
+};
+const ch=k=>k<=0?'':k==1?'CH2':'(CH2)'+k;
+const CND={alkane:n=>n==1?'CH4':'CH3'+ch(n-2)+'CH3',alkene:n=>n==2?'CH2=CH2':'CH2=CH'+ch(n-3)+'CH3',alkyne:n=>n==2?'CH≡CH':'CH≡C'+ch(n-3)+'CH3',alcohol:n=>n==1?'CH3OH':'CH3'+ch(n-2)+'CH2OH',aldehyde:n=>n==1?'HCHO':n==2?'CH3CHO':'CH3'+ch(n-2)+'CHO',acid:n=>n==1?'HCOOH':n==2?'CH3COOH':'CH3'+ch(n-2)+'COOH',halo:n=>n==1?'CH3Cl':'CH3'+ch(n-2)+'CH2Cl'};
+const NMS={alkane:n=>STEM[n-1]+'ane',alkene:n=>n==2?'ethene':STEM[n-1]+'-1-ene',alkyne:n=>n==2?'ethyne':STEM[n-1]+'-1-yne',alcohol:n=>n<3?STEM[n-1]+'anol':STEM[n-1]+'an-1-ol',aldehyde:n=>STEM[n-1]+'anal',acid:n=>STEM[n-1]+'anoic acid',halo:n=>n==1?'chloromethane':n==2?'chloroethane':'1-chloro'+STEM[n-1]+'ane'};
+function orgDraw(){
+  const fk=$('ofam').value,F=FAM[fk];let n=+$('on').value;
+  if(n<F.min){n=F.min;$('on').value=n}
+  $('onv').textContent=n;
+  const h=F.h(n),fm='C'+(n>1?n:'')+'H'+(h>1?h:'')+(F.cl?'Cl':'')+(F.o?'O'+(F.o>1?F.o:''):''),cd=CND[fk](n);
+  const dx=48,dy=26,x0=44,W=x0*2+dx*(n+1),yc=70,tx='var(--tx)';
+  const P=i=>[x0+i*dx,yc+(i%2?-dy/2:dy/2)];
+  const ln=(a,b,oy)=>`<line x1='${a[0]}' y1='${a[1]+(oy||0)}' x2='${b[0]}' y2='${b[1]+(oy||0)}' stroke='${tx}' stroke-width='2' stroke-linecap='round'/>`;
+  const lab=(p,t,c)=>`<circle cx='${p[0]}' cy='${p[1]}' r='13' fill='var(--card)'/><text x='${p[0]}' y='${p[1]}' text-anchor='middle' dominant-baseline='central' font-size='15' font-weight='700' fill='${c}'>${t}</text>`;
+  let s=`<svg viewBox='0 0 ${W} 140' style='width:100%;max-width:${Math.round(W*1.4)}px;display:block;margin:0 auto'>`;
+  if(fk=='alkane'&&n==1){s+=`<text x='${W/2}' y='72' text-anchor='middle' dominant-baseline='central' font-size='34' font-weight='700' fill='${tx}'>${us(cd)}</text>`}
+  else{
+    for(let i=0;i<n-1;i++){const a=P(i),b=P(i+1);
+      if(i==0&&fk=='alkene')s+=ln(a,b,-3)+ln(a,b,3);
+      else if(i==0&&fk=='alkyne')s+=ln(a,b)+ln(a,b,-5)+ln(a,b,5);
+      else s+=ln(a,b);
+    }
+    const e=P(n-1),nx=P(n),dir=(n-1)%2?-1:1;
+    if(fk=='alcohol')s+=ln(e,nx)+lab(nx,'OH','#dc2626');
+    if(fk=='halo')s+=ln(e,nx)+lab(nx,'Cl','#16a34a');
+    if(fk=='aldehyde')s+=ln(e,nx,-3)+ln(e,nx,3)+lab(nx,'O','#dc2626');
+    if(fk=='acid'){const o=[e[0],e[1]+dir*30];s+=ln([e[0]-3,e[1]],[o[0]-3,o[1]])+ln([e[0]+3,e[1]],[o[0]+3,o[1]])+ln(e,nx)+lab(nx,'OH','#dc2626')+lab(o,'O','#dc2626')}
+    for(let i=0;i<n;i++){const q=P(i);s+=`<circle cx='${q[0]}' cy='${q[1]}' r='3' fill='${tx}'/>`}
+  }
+  s+='</svg>';
+  $('osvg').innerHTML=s;
+  let rows=tr2('ชื่อ (IUPAC)',NMS[fk](n),F.t)+tr2('สูตรโมเลกุล',sub(fm),'สูตรทั่วไป '+F.g)+tr2('สูตรโครงสร้างย่อ',sub(cd),'')+tr2('มวลโมเลกุล',f5(fmass(fm))+' g/mol','เพิ่มคาร์บอนที่ละ 1 ตัว = เพิ่ม CH<sub>2</sub> (14.027 g/mol)')+tr2('ลักษณะพันธะ',F.t,F.bd);
+  if(fk=='alkane')rows+=tr2('จุดเดือด',BP[n-1]+' °C','สถานะที่อุณหภูมิห้อง: '+(n<=4?'แก๊ส':'ของเหลว'))+tr2('ไอโซเมอร์โครงสร้าง',ISO[n-1]+' แบบ','สูตรโมเลกุลเดียวกันแต่โครงสร้างต่างกัน');
+  let comb='';
+  try{
+    const L=[fm,'O2','CO2','H2O'].concat(F.cl?['HCl']:[]),x=balance(L,2);
+    if(x&&x!=='many'){const T=L.map((f,i)=>({c:x[i],f}));comb=`<p style='margin:12px 0 2px;color:var(--mut);font-size:.9rem'>ปฏิกิริยาการเผาไหม้สมบูรณ์ (ดุลแล้ว)</p><div class='eq' style='font-size:1.2rem'>${side(T.slice(0,2))} → ${side(T.slice(2))}</div>`}
+  }catch(e){}
+  $('oout').innerHTML=`<table class='rs'>${rows}</table>${comb}`;
+}
+$('ofam').onchange=orgDraw;$('on').oninput=orgDraw;
+const POLY=[
+{n:'พอลิเอทิลีน (PE)',t:'a',m:['C2H4'],mn:['เอทิลีน (ethene)'],u:'C2H4',use:'ถุงพลาสติก ขวดน้ำ ฟิล์มห่ออาหาร'},
+{n:'พอลิโพรพิลีน (PP)',t:'a',m:['C3H6'],mn:['โพรพีน (propene)'],u:'C3H6',use:'กล่องอาหาร ฝาขวด เก้าอี้พลาสติก'},
+{n:'พอลิไวนิลคลอไรด์ (PVC)',t:'a',m:['C2H3Cl'],mn:['ไวนิลคลอไรด์'],u:'C2H3Cl',use:'ท่อน้ำ สายไฟ วัสดุปูพื้น'},
+{n:'พอลิสไตรีน (PS)',t:'a',m:['C8H8'],mn:['สไตรีน'],u:'C8H8',use:'โฟมบรรจุภัณฑ์ ช้อนส้อมพลาสติก'},
+{n:'เทฟลอน (PTFE)',t:'a',m:['C2F4'],mn:['เททราฟลูอโรเอทิลีน'],u:'C2F4',use:'เคลือบกระทะ ซีลท่อ'},
+{n:'อะคริลิก (PMMA)',t:'a',m:['C5H8O2'],mn:['เมทิลเมทาคริเลต'],u:'C5H8O2',use:'แผ่นอะคริลิกใส ป้ายไฟ'},
+{n:'ไนลอน-6,6',t:'c',m:['C6H10O4','C6H16N2'],mn:['กรดแอดิพิก (กรดเฮกซานไดโออิก)','เฮกซาเมทิลีนไดเอมีน'],u:'C12H22N2O2',use:'เส้นใยเสื้อผ้า เชือก ถุงน่อง'},
+{n:'พอลิเอทิลีนเทเรฟทาเลต (PET)',t:'c',m:['C8H6O4','C2H6O2'],mn:['กรดเทเรฟทาลิก','เอทิลีนไกคอล'],u:'C10H8O4',use:'ขวดน้ำดื่ม เส้นใยโพลีเอสเทอร์'}
+];
+$('yp').innerHTML=POLY.map((p,i)=>`<option value='${i}'>${p.n}</option>`).join('');
+function polyDraw(){
+  const p=POLY[+$('yp').value],n=+$('yn').value,cd=p.t=='c';$('ynv').textContent=n;
+  const Mu=fmass(p.u),M=n*Mu+(cd?18.015:0),idx=n<=7?[...Array(n).keys()]:[0,1,2,3,4,-1,n-1];
+  const W=64+(idx.length-1)*92+62,H=cd?126:84;
+  const T=(x,y,t,sz,c)=>`<text x='${x}' y='${y}' text-anchor='middle' font-size='${sz}' fill='${c||'var(--tx)'}'>${t}</text>`;
+  const ln=(x1,x2)=>`<line x1='${x1}' y1='38' x2='${x2}' y2='38' stroke='var(--tx)' stroke-width='2'/>`;
+  let s=`<svg viewBox='0 0 ${W} ${H}' style='width:100%;max-width:${Math.round(W*1.3)}px;display:block;margin:0 auto'>`+ln(12,26);
+  idx.forEach((k,j)=>{
+    const cx=64+j*92;
+    if(j>0)s+=ln(cx-54,cx-38);
+    if(k==-1){s+=T(cx,46,'···',24)+T(cx,72,'('+(n-6)+' หน่วย)',10,'var(--mut)');return}
+    if(cd){
+      s+=`<rect x='${cx-38}' y='20' width='38' height='36' rx='8' fill='var(--hal)'/><rect x='${cx}' y='20' width='38' height='36' rx='8' fill='var(--ae)'/>`+T(cx-19,43,'A',13)+T(cx+19,43,'B',13);
+      s+=`<line x1='${cx}' y1='56' x2='${cx}' y2='88' stroke='var(--mut)' stroke-dasharray='3 3'/><circle cx='${cx}' cy='100' r='14' fill='var(--non)'/>`+T(cx,103,'H₂O',9);
+      if(j>0)s+=`<line x1='${cx-46}' y1='38' x2='${cx-46}' y2='88' stroke='var(--mut)' stroke-dasharray='3 3'/><circle cx='${cx-46}' cy='100' r='14' fill='var(--non)'/>`+T(cx-46,103,'H₂O',9);
+    }else{
+      s+=`<rect x='${cx-38}' y='20' width='76' height='36' rx='10' fill='var(--post)'/>`+T(cx,43,us(p.u),11);
+    }
+    s+=T(cx,cd?72:72,'หน่วยที่ '+(k+1),9,'var(--mut)');
+  });
+  s+=ln(64+(idx.length-1)*92+38,64+(idx.length-1)*92+52)+'</svg>';
+  $('ysvg').innerHTML=s;
+  const eq=cd?`${n} ${sub(p.m[0])} + ${n} ${sub(p.m[1])} → [${sub(p.u)}]<sub>${n}</sub> + ${2*n-1} H<sub>2</sub>O`:`${n} ${sub(p.m[0])} → [${sub(p.u)}]<sub>${n}</sub>`;
+  let rows=tr2('ประเภท',cd?'แบบควบแน่น':'แบบเติม',cd?'มอนอเมอร์ 2 ชนิด (A, B) ต่อกันและปล่อยน้ำทุกครั้งที่เกิดพันธะ':'พันธะคู่ C=C เปิดออกแล้วต่อกันเป็นสายโซ่ ไม่มีสารอื่นหลุด')
+   +tr2('มอนอเมอร์',p.mn.join(' + '),p.m.map(sub).join(' + '))
+   +tr2('มวลหน่วยซ้ำ',f5(Mu)+' g/mol','สูตรหน่วยซ้ำ '+sub(p.u))
+   +tr2('มวลโมเลกุลพอลิเมอร์',f5(M)+' g/mol','M = n × M(หน่วยซ้ำ)'+(cd?' + 18.015 (หมู่ปลาย H และ OH)':' (ไม่รวมหมู่ปลาย)'));
+  if(cd){const mw=(2*n-1)*18.015,mm=n*(fmass(p.m[0])+fmass(p.m[1]));rows+=tr2('น้ำที่หลุดออก',(2*n-1)+' โมเลกุล',f5(mw)+' g/mol (พันธะที่เกิด = 2n − 1)')+tr2('ตรวจสอบมวล',f5(mm)+' = '+f5(M)+' + '+f5(mw),'มวลมอนอเมอร์ = พอลิเมอร์ + น้ำ')}
+  else rows+=tr2('ตรวจสอบมวล',f5(n*fmass(p.m[0]))+' = '+f5(M),'มวลมอนอเมอร์รวม = มวลพอลิเมอร์');
+  rows+=tr2('การใช้งาน',p.use,'');
+  $('yout').innerHTML=`<div class='eq' style='font-size:1.2rem'>${eq}</div><table class='rs'>${rows}</table>`;
+}
+let yt=null;
+$('yp').onchange=()=>{clearInterval(yt);polyDraw()};
+$('yn').oninput=()=>{clearInterval(yt);polyDraw()};
+$('yplay').onclick=()=>{clearInterval(yt);const sl=$('yn');sl.value=1;polyDraw();yt=setInterval(()=>{if(+sl.value>=15){clearInterval(yt);return}sl.value=+sl.value+1;polyDraw()},500)};
+orgDraw();polyDraw();
+
+/* ===== แก๊ส ===== */
+const R=0.082057,PU={atm:1,kPa:1/101.325,mmHg:1/760,bar:1/1.01325};
+const kel=(v,u)=>u=='C'?v+273.15:v;
+const blanks=ids=>{const raw=ids.map(i=>$(i).value.trim());return{b:raw.map((r,i)=>r===''?i:-1).filter(i=>i>=0),v:raw.map(num)}};
+$('ggo').onclick=()=>{
+  const o=$('gout'),{b,v}=blanks(['gp','gv','gn','gt']),pu=$('gpu').value,tu=$('gtu').value;
+  if(b.length!=1){o.innerHTML=ERR('เว้นว่างไว้ 1 ช่องที่ต้องการหา และกรอกอีก 3 ช่อง');return}
+  const i=b[0];
+  if(v.some((x,j)=>j==i?false:j==3?!(kel(x,tu)>0):!(x>0))){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง (T ต้องมากกว่า 0 K)');return}
+  const P=v[0]*PU[pu],V=v[1],n=v[2],T=kel(v[3],tu);let r,u,st;
+  if(i==0){r=n*R*T/V/PU[pu];u=pu;st='P = nRT ÷ V = '+f5(n)+' × 0.08206 × '+f5(T)+' ÷ '+f5(V)}
+  else if(i==1){r=n*R*T/P;u='L';st='V = nRT ÷ P = '+f5(n)+' × 0.08206 × '+f5(T)+' ÷ '+f5(P)+' (atm)'}
+  else if(i==2){r=P*V/(R*T);u='mol';st='n = PV ÷ RT = '+f5(P)+' × '+f5(V)+' ÷ (0.08206 × '+f5(T)+')'}
+  else{const k=P*V/(n*R);r=tu=='C'?k-273.15:k;u=tu=='C'?'°C':'K';st='T = PV ÷ nR = '+f5(k)+' K'}
+  o.innerHTML=`<p class='eq' style='font-size:1.3rem'>${['P','V','n','T'][i]} = ${f5(r)} ${u}</p><p class='empty'>${st}</p>`;
+};
+$('kgo').onclick=()=>{
+  const o=$('kout'),{b,v}=blanks(['k1','k2','k3','k4','k5','k6']),tu=$('ktu').value;
+  if(b.length!=1){o.innerHTML=ERR('เว้นว่างไว้ 1 ช่องที่ต้องการหา และกรอกอีก 5 ช่อง');return}
+  const i=b[0];
+  if(v.some((x,j)=>j==i?false:(j==2||j==5)?!(kel(x,tu)>0):!(x>0))){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง (T ต้องมากกว่า 0 K)');return}
+  const [a,bb,c0,d,e,f0]=v,c=kel(c0,tu),f=kel(f0,tu);
+  let x=[()=>d*e*c/(bb*f),()=>d*e*c/(a*f),()=>a*bb*f/(d*e),()=>a*bb*f/(e*c),()=>a*bb*f/(d*c),()=>d*e*c/(a*bb)][i]();
+  if(i==2||i==5)x=tu=='C'?x-273.15:x;
+  o.innerHTML=`<p class='eq' style='font-size:1.3rem'>${['P₁','V₁','T₁','P₂','V₂','T₂'][i]} = ${f5(x)}${(i==2||i==5)?(tu=='C'?' °C':' K'):''}</p><p class='empty'>จาก P₁V₁/T₁ = P₂V₂/T₂ (T แปลงเป็นเคลวินแล้ว)</p>`;
+};
+$('hgo').onclick=()=>{
+  const o=$('hout'),f1=$('hf1').value.trim(),f2=$('hf2').value.trim(),P=num($('hP').value),tc=num($('hT').value);
+  try{
+    if(!f1||!valid(f1)||(f2&&!valid(f2))){o.innerHTML=ERR('สูตรเคมีไม่ถูกต้อง');return}
+    if(!(P>0)||!(tc+273.15>0)){o.innerHTML=ERR('กรุณาใส่ P และ T ให้ถูกต้อง');return}
+    const T=tc+273.15,gas=f=>{const M=fmass(f);return{M,d:P*M/(R*T),u:Math.sqrt(3*8.314*T/(M/1000))}};
+    const g1=gas(f1);
+    let rows=tr2('มวลโมลาร์ '+sub(f1),f5(g1.M)+' g/mol','')+tr2('ความหนาแน่น ρ',f5(g1.d)+' g/L','ρ = PM ÷ RT')+tr2('ปริมาตรโมลาร์',f5(R*T/P)+' L/mol','V<sub>m</sub> = RT ÷ P')+tr2('อัตราเร็ว rms',f5(g1.u)+' m/s','√(3RT ÷ M), R = 8.314 J/(mol·K)');
+    if(f2){
+      const g2=gas(f2),ra=Math.sqrt(g2.M/g1.M);
+      rows+=tr2('มวลโมลาร์ '+sub(f2),f5(g2.M)+' g/mol','')+tr2('ความหนาแน่น ρ ของ '+sub(f2),f5(g2.d)+' g/L','')
+       +tr2('Graham: r<sub>1</sub> ÷ r<sub>2</sub>',f5(ra),sub(f1)+(ra>=1?' แพร่เร็วกว่า ':' แพร่ช้ากว่า ')+sub(f2)+' '+f5(ra>=1?ra:1/ra)+' เท่า')
+       +tr2('ความหนาแน่นสัมพัทธ์ ρ<sub>1</sub> ÷ ρ<sub>2</sub>',f5(g1.M/g2.M),'= M<sub>1</sub> ÷ M<sub>2</sub>');
+    }
+    o.innerHTML=`<table class='rs'>${rows}</table>`;
+  }catch(e){o.innerHTML=ERR('อ่านสูตรไม่ได้')}
+};
+$('zrows').innerHTML=[['N2',0.78],['O2',0.21],['Ar',0.01]].map((x,i)=>`<div class='fld'><label>แก๊สที่ ${i+1} (สูตร)<input id='zf${i+1}' list='dl' value='${x[0]}' autocomplete='off' autocapitalize='off'></label><label>โมล (mol)<input id='zn${i+1}' value='${x[1]}' inputmode='decimal'></label></div>`).join('');
+$('zgo').onclick=()=>{
+  const o=$('zout'),P=num($('zP').value),L=[];
+  try{
+    for(let i=1;i<=3;i++){const f=$('zf'+i).value.trim(),n=num($('zn'+i).value);if(f&&n>=0)L.push({f,n})}
+    if(L.length<2||!(P>0)){o.innerHTML=ERR('ใส่แก๊สอย่างน้อย 2 ชนิด พร้อมความดันรวม');return}
+    if(L.some(x=>!valid(x.f))){o.innerHTML=ERR('สูตรเคมีไม่ถูกต้อง');return}
+    const tot=L.reduce((s,x)=>s+x.n,0);
+    if(!(tot>0)){o.innerHTML=ERR('โมลรวมต้องมากกว่า 0');return}
+    o.innerHTML=`<table class='rs'>${L.map(x=>tr2(sub(x.f),f5(x.n/tot*P)+' atm','X = '+f5(x.n/tot)+' ('+f5(x.n)+' mol)')).join('')}${tr2('รวม',f5(P)+' atm','ผลรวมความดันย่อย = ความดันรวม')}</table>`;
+  }catch(e){o.innerHTML=ERR('อ่านสูตรไม่ได้')}
+};
+
+/* ===== กรด-เบส ===== */
+const KW=1e-14;
+function phBar(ph){const p=Math.max(0,Math.min(14,ph))/14*100;return `<div class='phbar'><i style='left:${p}%'></i><span style='left:0'>0</span><span style='left:50%;transform:translateX(-50%)'>7</span><span style='right:0'>14</span></div>`}
+function phRows(h){const ph=-Math.log10(h);return tr2('pH',f5(ph),ph<6.995?'เป็นกรด':ph>7.005?'เป็นเบส':'เป็นกลาง')+tr2('pOH',f5(14-ph),'pH + pOH = 14')+tr2('[H⁺]',f5(h)+' mol/L','')+tr2('[OH⁻]',f5(KW/h)+' mol/L','')}
+const PRE=[['— เลือกตัวอย่าง —',''],['กรดแอซิติก CH₃COOH (Ka = 1.8×10⁻⁵)','wa|1.8e-5'],['กรดไฮโดรฟลูออริก HF (Ka = 6.8×10⁻⁴)','wa|6.8e-4'],['กรดฟอร์มิก HCOOH (Ka = 1.8×10⁻⁴)','wa|1.8e-4'],['กรดไนตรัส HNO₂ (Ka = 4.5×10⁻⁴)','wa|4.5e-4'],['กรดไฮโดรไซไอโนน HCN (Ka = 4.9×10⁻¹⁰)','wa|4.9e-10'],['แอมโมเนีย NH₃ (Kb = 1.8×10⁻⁵)','wb|1.8e-5'],['เมทิลเอมีน CH₃NH₂ (Kb = 4.4×10⁻⁴)','wb|4.4e-4']];
+$('abpre').innerHTML=PRE.map(p=>`<option value='${p[1]}'>${p[0]}</option>`).join('');
+$('abpre').onchange=()=>{const v=$('abpre').value;if(!v)return;const s=v.split('|');$('abt').value=s[0];$('abk').value=s[1]};
+$('abgo').onclick=()=>{
+  const o=$('about'),t=$('abt').value,C=num($('abc').value),K=num($('abk').value),n=+$('abn').value;
+  if(!(C>0)){o.innerHTML=ERR('กรุณาใส่ความเข้มข้นที่มากกว่า 0');return}
+  let h,st,extra='';
+  if(t=='sa'){const c=n*C;h=(c+Math.sqrt(c*c+4*KW))/2;st='กรดแก่แตกตัวสมบูรณ์: [H⁺] = '+n+' × '+f5(C)}
+  else if(t=='sb'){const c=n*C,oh=(c+Math.sqrt(c*c+4*KW))/2;h=KW/oh;st='เบสแก่แตกตัวสมบูรณ์: [OH⁻] = '+n+' × '+f5(C)}
+  else{
+    if(!(K>0)){o.innerHTML=ERR('กรุณาใส่ค่า Ka หรือ Kb');return}
+    const x=(-K+Math.sqrt(K*K+4*K*C))/2;
+    if(t=='wa'){h=x;st='Ka = x² ÷ (C − x) แก้สมการกำลังสอง → x = [H⁺] = '+f5(x)}
+    else{h=KW/x;st='Kb = x² ÷ (C − x) แก้สมการกำลังสอง → x = [OH⁻] = '+f5(x)}
+    extra=tr2('ร้อยละการแตกตัว',f5(x/C*100)+' %','α = x ÷ C × 100');
+  }
+  o.innerHTML=`<p class='empty' style='margin:0'>${st}</p>`+phBar(-Math.log10(h))+`<table class='rs'>${phRows(h)}${extra}</table>`;
+};
+$('phgo').onclick=()=>{
+  const o=$('phout'),k=$('phk').value,v=num($('phv').value);
+  if(!isFinite(v)||((k=='H'||k=='OH')&&!(v>0))){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง (ความเข้มข้นต้องมากกว่า 0)');return}
+  const h=k=='pH'?Math.pow(10,-v):k=='pOH'?KW/Math.pow(10,-v):k=='H'?v:KW/v;
+  o.innerHTML=phBar(-Math.log10(h))+`<table class='rs'>${phRows(h)}</table>`;
+};
+$('tigo').onclick=()=>{
+  const o=$('ti_out'),v=['ti_ca','ti_va','ti_cb','ti_vb'].map(i=>num($(i).value)),na=+$('ti_na').value,nb=+$('ti_nb').value;
+  if(!(v[0]>0&&v[1]>0&&v[2]>0)){o.innerHTML=ERR('กรุณาใส่ C กรด, V กรด และ C เบส ให้ถูกต้อง');return}
+  const veq=na*v[0]*v[1]/(nb*v[2]),has=v[3]>=0,vb=v[3];
+  const ph=x=>{const d=(na*v[0]*v[1]-nb*v[2]*x)/(v[1]+x);return -Math.log10((d+Math.sqrt(d*d+4*KW))/2)};
+  const xm=Math.max(2*veq,has?vb*1.1:0),W=560,H=250,l=44,r=14,t=12,bt=34;
+  const X=x=>l+x/xm*(W-l-r),Y=y=>t+(1-y/14)*(H-t-bt);
+  let pts='';for(let i=0;i<=160;i++){const x=xm*i/160;pts+=X(x).toFixed(1)+','+Y(ph(x)).toFixed(1)+' '}
+  let s=`<svg viewBox='0 0 ${W} ${H}' style='width:100%;max-width:${W}px;display:block;margin:12px auto 0'>`;
+  [0,7,14].forEach(y=>{s+=`<line x1='${l}' y1='${Y(y)}' x2='${W-r}' y2='${Y(y)}' stroke='var(--bd)'/><text x='${l-6}' y='${Y(y)+4}' text-anchor='end' font-size='11' fill='var(--mut)'>${y}</text>`});
+  s+=`<line x1='${X(veq)}' y1='${t}' x2='${X(veq)}' y2='${H-bt}' stroke='var(--mut)' stroke-dasharray='4 4'/><polyline points='${pts}' fill='none' stroke='var(--ac)' stroke-width='3'/>`;
+  s+=`<text x='${X(veq)}' y='${H-bt+16}' text-anchor='middle' font-size='11' fill='var(--mut)'>จุดสมมูล ${f5(veq)} mL</text><text x='${(l+W-r)/2}' y='${H-4}' text-anchor='middle' font-size='11' fill='var(--mut)'>ปริมาตรเบสที่เติม (mL)</text><text x='12' y='${t+8}' font-size='11' fill='var(--mut)'>pH</text>`;
+  let rows=tr2('ปริมาตรเบสที่จุดสมมูล',f5(veq)+' mL','nₐCₐVₐ = nᵦCᵦVᵦ → Vᵦ = '+na+'×'+f5(v[0])+'×'+f5(v[1])+' ÷ ('+nb+'×'+f5(v[2])+')');
+  let bar='';
+  if(has){const p=ph(vb);s+=`<circle cx='${X(vb)}' cy='${Y(p)}' r='6' fill='#ef4444'/>`;bar=phBar(p);rows+=tr2('pH ที่ Vเบส = '+f5(vb)+' mL',f5(p),vb<veq*0.9999?'ก่อนจุดสมมูล (กรดเหลือ)':vb>veq*1.0001?'หลังจุดสมมูล (เบสเหลือ)':'จุดสมมูล (pH ≈ 7)')}
+  s+='</svg>';
+  o.innerHTML=bar+`<table class='rs'>${rows}</table>`+s;
+};
+const BPRE=[['— เลือกคู่บัฟเฟอร์ —',''],['CH₃COOH / CH₃COO⁻ (pKa 4.76)','4.76'],['HCOOH / HCOO⁻ (pKa 3.75)','3.75'],['H₂CO₃ / HCO₃⁻ (pKa 6.35)','6.35'],['H₂PO₄⁻ / HPO₄²⁻ (pKa 7.21)','7.21'],['NH₄⁺ / NH₃ (pKa 9.25)','9.25'],['HF / F⁻ (pKa 3.17)','3.17']];
+$('bfpre').innerHTML=BPRE.map(p=>`<option value='${p[1]}'>${p[0]}</option>`).join('');
+$('bfpre').onchange=()=>{if($('bfpre').value)$('bfp').value=$('bfpre').value};
+/* ===== จัดระเบียบหน้าเว็บ + แท็บสนับสนุน ===== */
+/* >>> ตั้งค่าช่องทางโดเนทที่นี่ (ปล่อยว่าง = ไม่แสดง) <<< */
+const DONATE={
+  name:'นางดวงเดือน ดาศรี',            /* ชื่อผู้พัฒนา/ผู้รับ เช่น 'สมชาย' */
+  message:'ขอบคุณที่ช่วยสนับสนุนเว็บนี้ ❤️',
+  qrPayload:'00020101021229370016A0000006770101110113006680490915353037645802TH630482F9',
+  promptpay:'',      /* เบอร์พร้อมเพย์ 10 หลัก (0812345678) หรือเลขบัตรประชาชน 13 หลัก */
+  banks:[{bank:'ธนาคารกรุงไทย',no:'6642183231',name:'นางดวงเดือน ดาศรี'}],          /* เช่น [{bank:'กสิกรไทย',no:'123-4-56789-0',name:'ชื่อบัญชี'}] */
+  links:[]           /* เช่น [{label:'Buy Me a Coffee',url:'https://...'}] */
+};
+const esc=s=>String(s).replace(/[&<>']/g,c=>'&#'+c.charCodeAt(0)+';');
+function crc16(s){let c=0xFFFF;for(let i=0;i<s.length;i++){c^=s.charCodeAt(i)<<8;for(let j=0;j<8;j++)c=(c&0x8000)?((c<<1)^0x1021)&0xFFFF:(c<<1)&0xFFFF}return c.toString(16).toUpperCase().padStart(4,'0')}
+function ppPayload(id,amt){
+  const d=String(id).replace(/\D/g,'');let tag,val;
+  if(d.length==10&&d[0]=='0'){tag='01';val='0066'+d.slice(1)}else if(d.length==13){tag='02';val=d}else return null;
+  const f=(t,v)=>t+String(v.length).padStart(2,'0')+v;
+  let p=f('00','01')+f('01',amt>0?'12':'11')+f('29',f('00','A000000677010111')+f(tag,val))+f('53','764')+(amt>0?f('54',amt.toFixed(2)):'')+f('58','TH')+'6304';
+  return p+crc16(p);
+}
+function ppRaw(raw,amt){
+  if(!(amt>0))return raw;
+  const T=[];let i=0;
+  while(i<raw.length){const t=raw.substr(i,2),l=+raw.substr(i+2,2);T.push([t,raw.substr(i+4,l)]);i+=4+l}
+  const m=T.filter(x=>x[0]!='63'&&x[0]!='54'&&x[0]!='01');
+  m.push(['01','12']);m.push(['54',amt.toFixed(2)]);
+  m.sort((a,b)=>a[0]<b[0]?-1:1);
+  const p=m.map(x=>x[0]+String(x[1].length).padStart(2,'0')+x[1]).join('')+'6304';
+  return p+crc16(p);
+}
+let donAmt=0;
+function donQR(){
+  const box=$('donQR'),p=DONATE.qrPayload?ppRaw(DONATE.qrPayload,donAmt):ppPayload(DONATE.promptpay,donAmt);box.innerHTML='';
+  if(!p){box.textContent='เลขพร้อมเพย์ไม่ถูกต้อง';return}
+  if(typeof QRCode=='undefined'){box.textContent='โหลด QR ไม่สำเร็จ — โอนผ่านพร้อมเพย์ '+DONATE.promptpay;return}
+  new QRCode(box,{text:p,width:220,height:220,correctLevel:QRCode.CorrectLevel.M});
+}
+function donInit(){
+  const D=DONATE,pp=String(D.promptpay).trim()!==''||!!D.qrPayload,bk=(D.banks||[]).length>0,lks=(D.links||[]).filter(l=>l.url&&(l.url.startsWith('https://')||l.url.startsWith('http://')));
+  $('donMsg').innerHTML=esc(D.message||'')+(D.name?' <b>— '+esc(D.name)+'</b>':'');
+  $('donEmpty').hidden=pp||bk||lks.length>0;$('donPP').hidden=!pp;$('donBank').hidden=!bk;$('donLinks').hidden=!lks.length;
+  if(pp){
+    $('donAm').innerHTML=[20,50,100,200].map(a=>`<button class='btn' data-a='${a}'>${a} ฿</button>`).join('')+`<button class='btn on' data-a='0'>ไม่ระบุจำนวน</button><input id='donCus' inputmode='numeric' placeholder='ระบุเอง (฿)' style='width:130px;font:inherit;padding:8px 10px;border-radius:10px;border:1px solid var(--bd);background:var(--bg);color:var(--tx)'>`;
+    $('donAm').onclick=e=>{const b=e.target.closest('button');if(!b)return;donAmt=+b.dataset.a;$('donAm').querySelectorAll('button').forEach(x=>x.classList.toggle('on',x==b));$('donCus').value='';donQR()};
+    $('donCus').oninput=()=>{donAmt=Math.max(0,+$('donCus').value||0);$('donAm').querySelectorAll('button').forEach(x=>x.classList.remove('on'));donQR()};
+    $('donPPno').textContent=D.promptpay||D.name;donQR();
+  }
+  if(bk){
+    $('donBankL').innerHTML=D.banks.map(b=>`<div class='bank'><div><b>${esc(b.bank||'')}</b><br><span class='empty'>${esc(b.name||'')}</span></div><div><span style='font-size:1.15rem;font-weight:700'>${esc(b.no||'')}</span> <button class='btn' data-c='${esc(b.no||'')}'>คัดลอก</button></div></div>`).join('');
+    $('donBankL').onclick=e=>{const b=e.target.closest('button');if(!b)return;try{navigator.clipboard.writeText(b.dataset.c);b.textContent='คัดลอกแล้ว ✓'}catch(err){b.textContent=b.dataset.c}};
+  }
+  if(lks.length)$('donLk').innerHTML=lks.map(l=>`<a class='btn lnk' href='${esc(l.url)}' target='_blank' rel='noopener noreferrer'>${esc(l.label||l.url)}</a>`).join('');
+}
+donInit();
+const hs=document.querySelector('p.sub');$('tab1').prepend(hs);
+const gen=document.createElement('p');gen.className='sub';gen.textContent='ชุดเครื่องมือเคมีครบในที่เดียว — ผสมธาตุ คำนวณโมล ดุลสมการ อินทรีย์/พอลิเมอร์ แก๊ส และกรด-เบส';document.querySelector('h1').after(gen);
+const TABN={tab1:'mix',tab2:'mole',tab3:'balance',tab4:'organic',tab5:'gas',tab6:'acid',tab7:'donate'};
+function showTab(id){
+  document.querySelectorAll('.tab').forEach(x=>x.classList.toggle('on',x.dataset.t==id));
+  Object.keys(TABN).forEach(k=>$(k).hidden=k!=id);
+  try{const a=document.querySelector('.tab.on');a.scrollIntoView({inline:'center',block:'nearest'})}catch(e){}
+}
+const tabFromHash=()=>Object.keys(TABN).find(k=>TABN[k]==(location.hash||'').slice(1))||'tab1';
+document.querySelectorAll('.tab').forEach(b=>b.onclick=()=>{showTab(b.dataset.t);try{history.replaceState(null,'','#'+TABN[b.dataset.t])}catch(e){}window.scrollTo(0,0)});
+$('footDon').onclick=()=>{showTab('tab7');try{history.replaceState(null,'','#donate')}catch(e){}window.scrollTo(0,0)};
+window.addEventListener('hashchange',()=>showTab(tabFromHash()));
+showTab(tabFromHash());
+/* ===== โหมดสว่าง / มืด ===== */
+const THEMES=[['auto','🖥️ อัตโนมัติ'],['light','☀️ สว่าง'],['dark','🌙 มืด']];
+function setTheme(m,save){
+  const r=document.documentElement;
+  if(m=='auto')r.removeAttribute('data-theme');else r.setAttribute('data-theme',m);
+  document.querySelectorAll('.tm').forEach(b=>b.classList.toggle('on',b.dataset.m==m));
+  if(save){try{localStorage.setItem('chem-theme',m)}catch(e){}}
+}
+const tb=document.createElement('div');tb.className='themebar';
+tb.innerHTML=THEMES.map(t=>`<button class='tm' data-m='${t[0]}'>${t[1]}</button>`).join('');
+tb.onclick=e=>{const b=e.target.closest('button');if(b)setTheme(b.dataset.m,true)};
+document.querySelector('h1').before(tb);
+let svTheme='auto';try{svTheme=localStorage.getItem('chem-theme')||'auto'}catch(e){}
+setTheme(['auto','light','dark'].includes(svTheme)?svTheme:'auto',false);
+$('bfgo').onclick=()=>{
+  const o=$('bfout'),pk=num($('bfp').value),A=num($('bfa').value),HA=num($('bfh').value),xr=$('bfx').value.trim(),x=xr===''?0:num(xr);
+  if(!isFinite(pk)||!(A>0)||!(HA>0)||!isFinite(x)){o.innerHTML=ERR('กรุณาใส่ pKa และปริมาณ A⁻, HA ให้ถูกต้อง');return}
+  const A2=A-x,H2=HA+x;
+  if(A2<=0||H2<=0){o.innerHTML=ERR('เติมกรด/เบสมากเกินไป บัฟเฟอร์หมดสภาพ (สารคู่สบหมด)');return}
+  const p0=pk+Math.log10(A/HA),p1=pk+Math.log10(A2/H2);
+  o.innerHTML=phBar(p1)+`<table class='rs'>${tr2('pH เริ่มต้น',f5(p0),'pKa + log('+f5(A)+' ÷ '+f5(HA)+')')}${tr2('pH หลังเติม',f5(p1),'pKa + log('+f5(A2)+' ÷ '+f5(H2)+')')}${tr2('การเปลี่ยนแปลง ΔpH',f5(p1-p0),Math.abs(p1-pk)<=1?'อยู่ในช่วงบัฟเฟอร์ที่ดี (pKa ± 1)':'นอกช่วง pKa ± 1 บัฟเฟอร์ไม่ค่อยมีประสิทธิภาพ')}</table>`;
+};
+$('ptype').onchange=()=>{$('pl').firstChild.textContent=$('ptype').value=='M'?'ปริมาตรสารละลาย (mL)':'มวลตัวทำละลาย (g)'};
+$('pcalc').onclick=()=>{
+  const o=$('pout'),f=$('pf').value.trim(),C=num($('pc').value),A=num($('pa').value),t=$('ptype').value;
+  try{
+    if(!f||!valid(f)){o.innerHTML=ERR('สูตรเคมีไม่ถูกต้อง');return}
+    if(!(C>=0)||!(A>0)){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง');return}
+    const M=fmass(f),n=C*A/1000,m=n*M;
+    const st=t=='M'?'n = M × V(L) = '+f5(C)+' × '+f5(A/1000):'n = m × มวลตัวทำละลาย(kg) = '+f5(C)+' × '+f5(A/1000);
+    const how=t=='M'?'ชั่ง '+f5(m)+' g ละลายในน้ำเล็กน้อย แล้วเติมน้ำจนได้ปริมาตรสารละลาย '+f5(A)+' mL':'ชั่ง '+f5(m)+' g ละลายลงในตัวทำละลาย '+f5(A)+' g';
+    o.innerHTML=`<p style='margin:0'>M ของ <b>${sub(f)}</b> = <b>${f5(M)}</b> g/mol</p><table class='rs'>${tr2('จำนวนโมลที่ต้องใช้',f5(n)+' mol',st)}${tr2('มวลที่ต้องชั่ง',f5(m)+' g','m = n × M = '+f5(n)+' × '+f5(M))}</table><p class='empty'>${how}</p>`;
+  }catch(e){o.innerHTML=ERR('อ่านสูตรไม่ได้')}
+};
+$('tcalc').onclick=()=>{
+  const o=$('tout'),r=RXL[+$('rs').value],L=[...r.R,...r.P],g=L[+$('sp').value],q=num($('sq').value);
+  if(!(q>=0)){o.innerHTML=ERR('กรุณาใส่ตัวเลขที่ถูกต้อง');return}
+  const ng=$('su').value=='g'?q/fmass(g.f):q,xi=ng/g.c;
+  const rows=L.map((t,i)=>tr2((i<r.R.length?'สารตั้งต้น ':'ผลิตภัณฑ์ ')+'<b>'+sub(t.f)+'</b>',f5(xi*t.c)+' mol = '+f5(xi*t.c*fmass(t.f))+' g','สัมประสิทธิ์ '+t.c)).join('');
+  o.innerHTML=`<div class='eq' style='font-size:1.2rem'>${side(r.R)} → ${side(r.P)}</div><p class='empty'>n(${sub(g.f)}) = ${f5(ng)} mol → หารด้วยสัมประสิทธิ์ ${g.c} = ${f5(xi)} แล้วคูณสัมประสิทธิ์ของแต่ละสาร (อัตราส่วนโมล)</p><table class='rs'>${rows}</table>`;
+};
+</script>
+</body>
+</html>
